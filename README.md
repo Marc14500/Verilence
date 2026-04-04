@@ -67,7 +67,7 @@ Every finding gets a **confidence score (0-100%)** from 3 independent signals:
 ✅ **Glass Box Framework** - Every number is auditable and transparent
 ✅ **Mathematical Proof** - Findings include complete calculation audit trail
 ✅ **Production AI** - Uses Google Gemini 2.5 Pro (not experimental)
-✅ **Enterprise Ready** - SOC 2 compliance, audit logging, reproducibility
+
 ✅ **Multiple Export Formats** - PDF reports, CSV findings, email sharing
 ✅ **No Black Box** - You can see exactly why we found each contradiction
 
