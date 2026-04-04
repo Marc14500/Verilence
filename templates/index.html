@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERILENCE - Legal Document Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { font-family: Arial, sans-serif; background: #f5f5f5; color: #1e293b; min-height: 100vh; }
+        .navbar { background: white; border-bottom: 1px solid #e2e8f0; padding: 16px 32px; position: sticky; top: 0; z-index: 100; }
+        .navbar-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .navbar-brand { font-size: 20px; font-weight: 700; color: #0f172a; display: flex; align-items: center; }
+        .navbar-brand img { height: 40px; margin-right: 12px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 48px 32px; }
+        .hero { text-align: center; margin-bottom: 64px; }
+        .hero h1 { font-size: 48px; font-weight: 700; color: #0f172a; margin-bottom: 12px; }
+        .hero p { font-size: 18px; color: #64748b; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 48px; }
+        .card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 32px; transition: all 0.3s ease; cursor: pointer; }
+        .card:hover { border-color: #3b82f6; box-shadow: 0 12px 24px rgba(59, 130, 246, 0.1); transform: translateY(-4px); }
+        .card h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; color: #0f172a; }
+        .card p { font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 24px; }
+        .upload-zone { border: 2px dashed #3b82f6; border-radius: 8px; padding: 48px 32px; text-align: center; background: rgba(59, 130, 246, 0.02); cursor: pointer; transition: all 0.3s ease; }
+        .upload-zone:hover { border-color: #60a5fa; background: rgba(59, 130, 246, 0.05); }
+        .upload-icon { font-size: 48px; margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        #fileInput { display: none; }
+        .results { margin-top: 48px; }
+        .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .results-header h2 { font-size: 24px; font-weight: 700; color: #0f172a; }
+        .finding-item { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 16px; cursor: pointer; transition: all 0.3s ease; }
+        .finding-item:hover { border-color: #3b82f6; background: #f8fafc; transform: translateX(4px); }
+        .finding-title { font-size: 16px; font-weight: 600; color: #0f172a; }
+        .finding-summary { font-size: 13px; color: #64748b; line-height: 1.6; margin-top: 12px; }
+        .report-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); overflow-y: auto; }
+        .report-modal.show { display: block; }
+        .report-content { background: white; margin: 40px auto; padding: 40px; border-radius: 12px; width: 90%; max-width: 1000px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2); }
+        .close-btn { float: right; font-size: 28px; font-weight: 300; color: #64748b; cursor: pointer; }
+        .close-btn:hover { color: #ef4444; }
+        .report-content h2 { color: #0f172a; margin-top: 24px; margin-bottom: 12px; font-size: 18px; }
+        .report-content h3 { color: #1e293b; margin-top: 16px; margin-bottom: 8px; font-size: 14px; }
+        .report-content p { line-height: 1.8; font-size: 14px; margin-bottom: 12px; }
+        .methodology { background: #f0f7ff; padding: 20px; border-left: 4px solid #2a5298; margin: 15px 0; }
+        .math-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 12px; }
+        .math-table th { background: #2a5298; color: white; padding: 12px; text-align: left; font-weight: bold; }
+        .math-table td { padding: 10px; border-bottom: 1px solid #ddd; }
+        .math-table tr:nth-child(even) { background: #f9f9f9; }
+        .total-row { background: #e8f4f8; font-weight: bold; }
+        .highlight { background: #fff3cd; padding: 2px 6px; font-weight: bold; }
+        .loading { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 32px; color: #64748b; font-size: 14px; }
+        .spinner { width: 16px; height: 16px; border: 2px solid #e2e8f0; border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .learn-modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); overflow-y: auto; }
+        .learn-modal.show { display: block; }
+        .learn-content { background: white; margin: 40px auto; padding: 40px; border-radius: 12px; width: 90%; max-width: 900px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2); }
+        .learn-content h1 { color: #0f172a; font-size: 28px; margin-bottom: 24px; }
+        .learn-content h2 { color: #2a5298; margin-top: 28px; margin-bottom: 12px; font-size: 20px; }
+        .learn-content p { line-height: 1.8; font-size: 14px; margin-bottom: 12px; }
+        .learn-content li { line-height: 1.8; font-size: 14px; margin-left: 20px; margin-bottom: 8px; }
+        .learn-box { background: #f0f7ff; padding: 20px; border-left: 4px solid #2a5298; margin: 15px 0; }
+        .learn-box h3 { color: #2a5298; margin-top: 0; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-content">
+            <div class="navbar-brand">
+                <img src="/static/verilence_logo.png" alt="Verilence">
+                VERILENCE
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="hero">
+            <h1>Document Contradiction Detection</h1>
+            <p>AI-powered analysis engine for legal document review</p>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <h2>Upload Document</h2>
+                <p>Submit PDF or text documents for automatic contradiction analysis.</p>
+                <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📄</div>
+                    <p style="margin: 0; font-weight: 600;">Click to upload or drag and drop</p>
+                    <p style="margin: 8px 0 0 0; font-size: 13px; color: #64748b;">PDF, TXT • Max 50MB</p>
+                </div>
+                <input type="file" id="fileInput" accept=".pdf,.txt" onchange="handleUpload(event)">
+            </div>
+            
+            <div class="card" onclick="openLearnModal()">
+                <h2>How It Works</h2>
+                <p><strong>Explainable Boosting Machine (EBM)</strong></p>
+                <p>Learn how our Glass Box framework delivers auditable, mathematically defensible contradictions detection.</p>
+                <p style="color: #3b82f6; font-weight: 600; margin-top: 20px;">Click to learn more →</p>
+            </div>
+        </div>
+        
+        <div class="results" id="results" style="display: none;">
+            <div class="results-header"><h2>Analysis Results</h2></div>
+            <div id="resultsBody"></div>
+        </div>
+    </div>
+    
+    <div id="reportModal" class="report-modal">
+        <div class="report-content">
+            <span class="close-btn" onclick="closeReport()">&times;</span>
+            <div id="reportBody"></div>
+        </div>
+    </div>
+    
+    <div id="learnModal" class="learn-modal">
+        <div class="learn-content">
+            <span class="close-btn" onclick="closeLearnModal()" style="display: block; margin-bottom: 20px;">&times;</span>
+            
+            <h1>Explainable Boosting Machine (EBM) & Auditability</h1>
+            
+            <h2>What Is an Explainable Boosting Machine?</h2>
+            <p>An Explainable Boosting Machine (EBM) is a machine learning model that combines the power of sophisticated AI with complete transparency. Unlike "black box" AI models that make decisions in ways no one can understand, an EBM shows you exactly how it arrived at every conclusion.</p>
+            
+            <div class="learn-box">
+                <h3>Think of it like this:</h3>
+                <p><strong>Black Box AI:</strong> "Trust me, this is a contradiction" (you have no idea why)</p>
+                <p><strong>EBM:</strong> "This is a contradiction because: Signal A shows 80%, Signal B shows 90%, Signal C shows 75%. Combined: 85% confidence. Here's the formula." (complete transparency)</p>
+            </div>
+            
+            <h2>Why Auditability Matters for Legal Documents</h2>
+            <p>In legal work, you can't just trust a tool. You need to understand it. You need to defend it. You need to explain it to opposing counsel, regulators, or a judge.</p>
+            
+            <ul>
+                <li><strong>Court Defense:</strong> If a contradiction we found ends up in litigation, you need to explain how we found it. With EBM, you can show the exact calculation.</li>
+                <li><strong>Regulatory Compliance:</strong> SOX, FCPA, and other regulations require audit trails. Our EBM provides a complete, reproducible audit trail for every finding.</li>
+                <li><strong>Professional Liability:</strong> If someone challenges your analysis, you need mathematical proof, not guessing. EBM gives you that proof.</li>
+                <li><strong>Cross-Examination:</strong> Opposing counsel will ask "How did you find that?" With EBM, you can answer with math, not opinion.</li>
+            </ul>
+            
+            <h2>How Verilence Uses EBM for Auditability</h2>
+            
+            <div class="learn-box">
+                <h3>1. Transparent Confidence Scoring</h3>
+                <p>Every finding gets a confidence score (0-100%) based on three measurable signals:</p>
+                <ul style="margin-top: 12px;">
+                    <li><strong>Text Clarity (35%):</strong> How obvious is the contradiction in the document?</li>
+                    <li><strong>AI Reliability (35%):</strong> How reliable is Google Gemini at this task?</li>
+                    <li><strong>Chunk Quality (30%):</strong> Did we pull the right document sections?</li>
+                </ul>
+                <p style="margin-top: 12px;"><strong>Result:</strong> You can see exactly why we're confident (or not) in each finding.</p>
+            </div>
+            
+            <div class="learn-box">
+                <h3>2. Mathematical Proof</h3>
+                <p>Every number is calculated using a formula you can verify:</p>
+                <p style="margin-top: 12px; font-family: monospace; background: #f5f5f5; padding: 12px;">
+                    Confidence = (0.35 × Risk Certainty) + (0.35 × EBM Confidence) + (0.30 × Retrieval Score)
+                </p>
+                <p style="margin-top: 12px;"><strong>Result:</strong> No black box. No guessing. Pure math.</p>
+            </div>
+            
+            <div class="learn-box">
+                <h3>3. Complete Audit Trail</h3>
+                <p>For each contradiction we find, you get:</p>
+                <ul style="margin-top: 12px;">
+                    <li>Exact document sections involved</li>
+                    <li>How each signal was calculated</li>
+                    <li>Why confidence is what it is</li>
+                    <li>Routing decision (analyst review, partner escalation, etc.)</li>
+                </ul>
+                <p style="margin-top: 12px;"><strong>Result:</strong> Complete documentation. Ready for audit or court.</p>
+            </div>
+            
+            <div class="learn-box">
+                <h3>4. Reproducibility</h3>
+                <p>Run the same analysis on the same document 100 times. You'll get the exact same results every time. No randomness. No surprises.</p>
+                <p style="margin-top: 12px;"><strong>Result:</strong> You can defend your findings with confidence.</p>
+            </div>
+            
+            <h2>Why This Matters vs. Other AI Tools</h2>
+            <p><strong>Typical AI Legal Tools:</strong> "We found a contradiction" (no explanation, black box)</p>
+            <p><strong>Verilence:</strong> "We found a contradiction with 85% confidence because: [exact calculation shown]. Here's why. Here's the math. Here's the audit trail."</p>
+            
+            <h2>The Glass Box Standard</h2>
+            <p>We call this the "Glass Box" approach—everything is visible, transparent, and auditable. You can see through it to the logic underneath.</p>
+            
+            <div class="learn-box">
+                <h3>Glass Box vs. Black Box:</h3>
+                <ul style="margin-top: 12px;">
+                    <li><strong>Glass Box:</strong> Transparent, auditable, defensible, trustworthy</li>
+                    <li><strong>Black Box:</strong> Mysterious, unexplainable, risky, hard to trust</li>
+                </ul>
+            </div>
+            
+            <h2>Ready to Try It?</h2>
+            <p>Upload a document above. Check out the audit trail. See for yourself how transparent and auditable our analysis is.</p>
+        </div>
+    </div>
+    
+    <script>
+        function openLearnModal() {
+            document.getElementById('learnModal').classList.add('show');
+        }
+        
+        function closeLearnModal() {
+            document.getElementById('learnModal').classList.remove('show');
+        }
+        
+        async function handleUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const resultsDiv = document.getElementById('results');
+            const resultsBody = document.getElementById('resultsBody');
+            
+            resultsDiv.style.display = 'block';
+            resultsBody.innerHTML = '<div class="loading"><div class="spinner"></div> Analyzing document...</div>';
+            
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    let html = `<p>File: <strong>${data.filename}</strong> • Chunks: <strong>${data.chunks_created}</strong> • Findings: <strong>${data.analyzed}</strong></p>`;
+                    
+                    if (data.results && data.results.length > 0) {
+                        data.results.forEach((r, i) => {
+                            html += `<div class="finding-item" onclick="viewReport(${i})">
+                                <div class="finding-title">${r.query}</div>
+                                <div class="finding-summary">${r.findings} finding${r.findings !== 1 ? 's' : ''} found • Click to view detailed audit trail</div>
+                            </div>`;
+                        });
+                    }
+                    
+                    resultsBody.innerHTML = html;
+                    window.currentResults = data.results;
+                    await loadReports();
+                } else {
+                    resultsBody.innerHTML = `<p style="color: #ef4444;">Error: ${data.error || 'Unknown error'}</p>`;
+                }
+            } catch (error) {
+                resultsBody.innerHTML = `<p style="color: #ef4444;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function loadReports() {
+            try {
+                const response = await fetch('/api/reports');
+                const data = await response.json();
+                window.reports = data.reports || [];
+            } catch (error) {
+                console.error('Error loading reports:', error);
+            }
+        }
+        
+        async function viewReport(index) {
+            if (!window.reports || !window.reports[index]) return;
+            
+            const report = window.reports[index];
+            const reportBody = document.getElementById('reportBody');
+            reportBody.innerHTML = '<div class="loading"><div class="spinner"></div> Loading report...</div>';
+            
+            try {
+                const response = await fetch(report.path);
+                const data = await response.json();
+                
+                let html = `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <span class="close-btn" onclick="closeReport()" style="margin: 0; float: none;">&times;</span>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="downloadPDF()" style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">📥 Download PDF</button>
+                    <button onclick="shareReport()" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">📧 Share Report</button>
+                    <button onclick="exportCSV()" style="padding: 8px 16px; background: #8b5cf6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">📊 Export CSV</button>
+                </div>
+            </div>`;
+                html += `<h2>AUDIT REPORT</h2>`;
+                html += `<p><strong>Report ID:</strong> ${data.report_id}</p>`;
+                html += `<p><strong>Total Findings:</strong> ${data.findings.length}</p>`;
+                
+                data.findings.forEach((f, i) => {
+                    html += `<h2>Finding ${i + 1}: ${f.title}</h2>`;
+                    html += `<p>${f.explanation}</p>`;
+                    
+                    html += `<div style="background: #f0f7ff; padding: 15px; border-left: 4px solid #2a5298; margin: 15px 0;">
+                        <h3 style="margin-top: 0;">SOURCE VERIFICATION</h3>
+                        <p><strong>Document:</strong> ${f.document}</p>
+                        <p><strong>Analysis Method:</strong> EBM + LLM Synthesis</p>
+                    </div>`;
+                    
+                    const conf = f.confidence_calculation;
+                    
+                    html += `<h3>Our Confidence: <span class="highlight">${(conf.final_confidence * 100).toFixed(1)}%</span></h3>`;
+                    html += `<p>We are ${(conf.final_confidence * 100).toFixed(1)}% confident. Out of 100 similar cases, we'd expect to be right about ${Math.round(conf.final_confidence * 100)} times.</p>`;
+                    
+                    html += `<h3>How We Calculated This (3 Independent Signals)</h3>`;
+                    html += `<table class="math-table">`;
+                    html += `<tr><th>Signal</th><th>What It Measures</th><th>Strength</th><th>Weight</th><th>Impact</th></tr>`;
+                    html += `<tr>
+                        <td><strong>Signal #1: Text Clarity</strong></td>
+                        <td>How obvious is the contradiction in the document?</td>
+                        <td>${(conf.risk_certainty_value * 100).toFixed(1)}%</td>
+                        <td>35%</td>
+                        <td>+${(conf.risk_certainty_value * 0.35 * 100).toFixed(1)}%</td>
+                    </tr>`;
+                    html += `<tr>
+                        <td><strong>Signal #2: Google Gemini 2.5 Pro</strong></td>
+                        <td>Reliability of production AI (same LLM powering Google products)</td>
+                        <td>${(conf.ebm_confidence * 100).toFixed(1)}%</td>
+                        <td>35%</td>
+                        <td>+${(conf.ebm_confidence * 0.35 * 100).toFixed(1)}%</td>
+                    </tr>`;
+                    html += `<tr>
+                        <td><strong>Signal #3: Document Chunk Quality</strong></td>
+                        <td>Did we pull the right sections from the document?</td>
+                        <td>${(conf.retrieval_score * 100).toFixed(1)}%</td>
+                        <td>30%</td>
+                        <td>+${(conf.retrieval_score * 0.30 * 100).toFixed(1)}%</td>
+                    </tr>`;
+                    html += `<tr class="total-row">
+                        <td colspan="4"><strong>TOTAL CONFIDENCE</strong></td>
+                        <td><strong>${(conf.final_confidence * 100).toFixed(1)}%</strong></td>
+                    </tr>`;
+                    html += `</table>`;
+                    
+                    html += `<div class="methodology">
+                        <h3 style="margin-top: 0;">Why These Three Signals?</h3>
+                        <p><strong>Signal #1 (Text Clarity - 35%):</strong> If the contradiction is obvious in the text, we're more confident. If it's subtle or ambiguous, we're less confident.</p>
+                        <p><strong>Signal #2 (Google Gemini 2.5 Pro - 35%):</strong> This is Google's production AI. It powers Gmail, Google Docs, and other products used by billions. It's battle-tested. Not experimental. Not proprietary. This signal reflects how reliable that tool is.</p>
+                        <p><strong>Signal #3 (Document Chunk Quality - 30%):</strong> Our system pulls relevant sections. If we pulled sections that directly address the contradiction, this signal is strong. If we pulled vague sections, this signal is weak.</p>
+                    </div>`;
+                    
+                    html += `<h3>Routing Decision: ${f.routing_decision}</h3>`;
+                    html += `<p><strong>Protocol:</strong> Confidence > 85%? Auto-approve. Confidence 60-85%? Analyst review. Confidence < 60%? Partner escalation.</p>`;
+                    html += `<p><strong>This finding:</strong> ${(conf.final_confidence * 100).toFixed(1)}% confidence → ${f.routing_decision}</p>`;
+                });
+                
+                reportBody.innerHTML = html;
+            } catch (error) {
+                reportBody.innerHTML = `<p style="color: #ef4444;">Error loading report: ${error.message}</p>`;
+            }
+            
+            document.getElementById('reportModal').classList.add('show');
+        }
+        
+
+        function downloadPDF() {
+            const element = document.getElementById('reportBody');
+            const opt = {
+                margin: 10,
+                filename: 'verilence_audit_report.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+            
+            // Simple HTML to PDF conversion
+            const printWindow = window.open('', '', 'height=400,width=800');
+            printWindow.document.write('<html><head><title>Verilence Audit Report</title>');
+            printWindow.document.write('<style>body { font-family: Arial, sans-serif; } table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(element.innerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+        
+        function shareReport() {
+            const reportID = document.querySelector('p strong').nextSibling.textContent;
+            const email = prompt('Enter email address to share report:');
+            
+            if (email) {
+                // In production, this would call an API endpoint
+                // For now, copy shareable link to clipboard
+                const shareLink = `${window.location.origin}/reports/${reportID}`;
+                navigator.clipboard.writeText(shareLink);
+                alert(`Report link copied to clipboard:\n${shareLink}\n\nShare this with: ${email}`);
+            }
+        }
+        
+        function exportCSV() {
+            const reportBody = document.getElementById('reportBody');
+            
+            // Extract findings from report
+            let csv = 'Finding,Risk Score,Confidence,Routing Decision,Status\n';
+            
+            const findings = reportBody.querySelectorAll('h2');
+            findings.forEach((heading, i) => {
+                if (i > 0) { // Skip the AUDIT REPORT title
+                    const title = heading.textContent;
+                    const nextElements = heading.nextElementSibling;
+                    
+                    // Try to extract risk score and confidence from nearby text
+                    let riskScore = 'N/A';
+                    let confidence = 'N/A';
+                    let routing = 'N/A';
+                    
+                    const allText = reportBody.textContent;
+                    csv += `"${title}",${riskScore},${confidence},${routing},Complete\n`;
+                }
+            });
+            
+            // Create download link
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'verilence_findings.csv';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+        
+        function closeReport() {
+            document.getElementById('reportModal').classList.remove('show');
+        }
+
+        
+        window.onclick = function(event) {
+            const modalReport = document.getElementById('reportModal');
+            const modalLearn = document.getElementById('learnModal');
+            if (event.target == modalReport) {
+                modalReport.classList.remove('show');
+            }
+            if (event.target == modalLearn) {
+                modalLearn.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
+

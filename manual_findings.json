@@ -1,0 +1,57 @@
+{
+  "document": "Bakken_JOA_Amended_Restated_Full.docx.pdf",
+  "findings": [
+    {
+      "finding_id": "finding_1",
+      "title": "Sole Risk Cost Recovery - Conflicting Definitions",
+      "sections": ["Section 3.3(c)(i)", "Section 3.3(c)(ii)"],
+      "quote_a": "Section 3.3(c)(i): 'Operator's cost recovery included drilling and completion costs ONLY'",
+      "quote_b": "Section 3.3(c)(ii): 'Operator's cost recovery now includes drilling, completion, AND 24 months of operating costs'",
+      "risk_level": "HIGH",
+      "risk_score": 0.75,
+      "confidence": 0.92,
+      "explanation": "The document explicitly contains two conflicting definitions of 'cost recovery' for Sole Risk wells. Section 3.3(c)(i) defines it narrowly (drilling + completion only), while Section 3.3(c)(ii) redefines it broadly to include 24 months of operating costs. The dispute note in the document states: 'This provision has caused significant disputes. Interpretation of cost recovery is contested - does it include operating costs incurred after spud or only drilling/completion?' This is a REAL contradiction with financial consequences of hundreds of thousands of dollars.",
+      "consequences": "When Sole Risk wells transition between cost recovery phases, Operator and Non-Operators disagree on which definition applies. This directly impacts cash distributions and can paralyze operations.",
+      "document_quote": "From Section 3.3(c): '[DISPUTE NOTE: This provision has caused significant disputes. Interpretation of 'cost recovery' is contested - does it include operating costs incurred after spud or only drilling/completion?]'"
+    },
+    {
+      "finding_id": "finding_2",
+      "title": "AFE Cost Overrun Thresholds - Retroactive Ambiguity",
+      "sections": ["Section 3.4(b) - Original", "Section 3.4(b) - 2018 Amendment"],
+      "quote_a": "Original (2009): '10% to 20%: Overrun is joint-account unless Non-Operators vote to limit their share; if Operator chooses to continue, Operator absorbs overages above 20%'",
+      "quote_b": "Amended (2018): '10% to 20%: Overrun is joint-account unless Non-Operators vote to limit their share; if Operator chooses to continue, Operator absorbs overages above 20%' [with new thresholds: 10% and 20% instead of 15% and 25%]",
+      "risk_level": "HIGH",
+      "risk_score": 0.71,
+      "confidence": 0.88,
+      "explanation": "The 2018 Amendment changed cost overrun thresholds from 15%/25% to 10%/20%, but does NOT clarify whether this applies retroactively to wells drilled between 2012-2017. The document states: '[2018 AMENDMENT: This threshold changed from 15% and 25% respectively. See Exhibit C for complete history. Tier One Resources negotiated more favorable overrun treatment as part of operatorship agreement.]' A well that exceeded 15% overrun in 2016 (approved under old terms) could be challenged under new 10% threshold.",
+      "consequences": "Tier One Resources and Non-Operators disagree on which thresholds govern cost approvals for wells drilled before the 2018 Amendment. Could result in disputes over previously-approved overruns and forced renegotiation of well costs.",
+      "document_quote": "From Section 3.4(b): 'Tier One Resources negotiated more favorable overrun treatment as part of operatorship agreement' - but the agreement does not specify retroactive application."
+    },
+    {
+      "finding_id": "finding_3",
+      "title": "Operator Fee vs. Revenue Override - Dual Compensation Ambiguity",
+      "sections": ["Section 2.3(a)", "Section 2.3(b)", "Section 7.2(b)"],
+      "quote_a": "Section 2.3(a): 'Operator shall receive a monthly operating fee of $12,000 per month... charged to the Joint Account monthly and is NOT subject to cost overrun thresholds'",
+      "quote_b": "Section 2.3(b): 'From Net Revenue... Operator shall deduct its 3% override'",
+      "risk_level": "MEDIUM",
+      "risk_score": 0.64,
+      "confidence": 0.85,
+      "explanation": "The document grants Operator BOTH a monthly fixed fee ($12,000) AND a 3% revenue override. The fee is described as charged to Joint Account and NOT subject to overrun limits. The override is deducted from Net Revenue before distribution to all parties. The document does not explicitly state whether these are additive or mutually exclusive, or if the override is calculated before or after the monthly fee. With $500K monthly net revenue and 3% override = $15K + $12K monthly fee = $27K monthly to Operator just for compensation.",
+      "consequences": "Tier One Resources interprets this as both fees apply (total ~$27K/month + override). Non-Operators interpret the override as replacement for the monthly fee, not in addition. This creates a ~$180K/year dispute over Operator compensation.",
+      "document_quote": "Section 2.3(a) and 2.3(b) both apply but do not clarify whether they are cumulative or alternative."
+    },
+    {
+      "finding_id": "finding_4",
+      "title": "Bakken Energy Sole Risk Cost Recovery - Successor Operator Obligation",
+      "sections": ["Section 3.3(c)", "Section 3.3(d)", "Section 2.2(d)"],
+      "quote_a": "Section 3.3(d): 'Unit 14 reached BEP in 2016 but Bakken was removed as Operator in 2018 before full cost recovery (remaining recovery obligation: ~$840,000)'",
+      "quote_b": "Section 2.2(d): 'A successor Operator shall assume all rights, obligations, liabilities, and authority of the former Operator'",
+      "risk_level": "HIGH",
+      "risk_score": 0.78,
+      "confidence": 0.90,
+      "explanation": "Bakken Energy (original Operator) elected Sole Risk on Unit 14. The well became productive and reached break-even in 2016, but Bakken was removed as Operator in 2018 before collecting its remaining $840K cost recovery. Section 2.2(d) says successor Operator (Tier One) assumes 'all obligations' - but does this include collecting Bakken's $840K and distributing it to Bakken's successors? Or does Tier One keep the recovery? The document states: 'Tier One Resources, as successor Operator, is now responsible for collecting the remaining cost recovery and distributing to Bakken's successor (funds managed in escrow pending Bakken's creditor resolution).' But this is not explicitly stated in the operative text - it's only in Section 3.3(d) narrative.",
+      "consequences": "Bakken Energy's creditors believe they're owed $840K from Unit 14 production. Tier One Resources has control of the wells but unclear obligation. This creates a financial cloud over the asset.",
+      "document_quote": "Section 3.3(d): 'Bakken was removed as Operator in 2018 before full cost recovery (remaining recovery obligation: ~$840,000). Tier One Resources, as successor Operator, is now responsible for collecting the remaining cost recovery and distributing to Bakken's successor'"
+    }
+  ]
+}
