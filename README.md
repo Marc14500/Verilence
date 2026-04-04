@@ -83,12 +83,15 @@ Every finding gets a **confidence score (0-100%)** from 3 independent signals:
 7. **Route** - Decide if analyst/partner review needed based on confidence
 8. **Report** - Generate audit-ready HTML/JSON with complete math trail
 
-## Use Cases
+## Use Cases (Oil & Gas Focus)
 
-- **M&A Due Diligence** - Find contradictions in target company JOAs
-- **Portfolio Risk** - Scan all agreements for exposure
-- **Contract Review** - Flag ambiguities before signing
-- **Regulatory Compliance** - Audit trail for SOX/FCPA reviews
+- **JOA Due Diligence** - Find contradictions in Joint Operating Agreements before signing
+- **Sole Risk Analysis** - Identify cost recovery conflicts in sole risk provisions
+- **AFE Disputes** - Flag cost overrun threshold ambiguities
+- **Operator Fee Conflicts** - Detect dual compensation contradictions
+- **Portfolio Risk** - Scan all O&G JOAs for exposure across asset portfolio
+- **M&A Integration** - Find contradictions when merging operator agreements
+- **Regulatory Compliance** - Audit trail for SEC filings and compliance reviews
 
 ## Roadmap
 
