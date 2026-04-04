@@ -4,6 +4,7 @@
 import json
 from pathlib import Path
 from datetime import datetime
+import hashlib
 
 class AuditReportGenerator:
     def __init__(self):
@@ -47,10 +48,17 @@ class AuditReportGenerator:
         
         report = {
             "report_id": f"VER-{timestamp}",
+            "generated_timestamp": datetime.now().isoformat(),
             "query": query,
             "timestamp": timestamp,
             "total_findings": len(routed_findings),
             "summary": briefing['executive_summary'],
+            "document_metadata": {
+                "document_name": routed_findings[0].document_name if routed_findings else "Unknown",
+                "analysis_timestamp": datetime.now().isoformat(),
+                "gemini_model": "gemini-2.5-pro",
+                "confidence_calibration": "Uncalibrated - will adjust after 10+ pilot analyses"
+            },
             "findings": findings_detail
         }
         
