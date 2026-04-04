@@ -163,6 +163,6 @@ Proprietary - Verilence LLC
 
 ## Contact
 
-Marc Graves
+Marc Greaves
 Verilence LLC
 Richmond, VA
