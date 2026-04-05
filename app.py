@@ -158,7 +158,15 @@ def upload():
                 'message': 'Document analyzed - no contradictions detected'
             })
         
-        # Score and route findings
+        # Score findings with EBM — sets real risk_score on each finding
+        print("[APP] Scoring findings with EBM...")
+        for f in findings:
+            ebm_score, features = judge.score_finding(f)
+            f.risk_score = ebm_score
+            f.ebm_features = features
+            print(f"  EBM score: {ebm_score:.2f} — {getattr(f, 'title', 'Finding')[:50]}")
+
+        # Route findings based on EBM risk scores
         routed = router.route_findings(findings)
 
         # Save dashboard data
