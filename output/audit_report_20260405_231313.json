@@ -1,0 +1,135 @@
+{
+  "report_id": "VER-20260405_231313",
+  "generated_timestamp": "2026-04-05T23:13:13.920561",
+  "query": "contradiction detection",
+  "timestamp": "20260405_231313",
+  "total_findings": 7,
+  "summary": "Analyzed 4 chunks. Found 7 contradictions.",
+  "document_metadata": {
+    "document_name": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+    "analysis_timestamp": "2026-04-05T23:13:13.920577",
+    "gemini_model": "gemini-2.5-pro",
+    "confidence_calibration": "Uncalibrated - will adjust after 10+ pilot analyses"
+  },
+  "findings": [
+    {
+      "finding_id": "finding_0",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Contradictory Compensation for Executed Contracts Milestone",
+      "risk_score": 0.7,
+      "risk_level": "HIGH",
+      "explanation": "Section 3, Milestones & Deliverables Table: For the milestone 'Contracts executed \u2014 early adopter cohort', the Compensation Trigger is '3% of up-front revenue captured for early adopter cohort'\n\nvs\n\nEXHIBIT A \u2014 COMPENSATION SCHEDULE: For the milestone 'Signed contracts w/ monetary payment', the Bonus Amount is '$__________'\n\nProblem: There is a direct contradiction regarding the compensation for achieving the May 27, 2026 milestone. Section 3 specifies a formula-based payment (a percentage of revenue), while Exhibit A, which is explicitly for defining cash incentives, has a blank placeholder for a fixed dollar amount. This creates a severe ambiguity that will lead to a dispute over payment. Is the contractor owed a percentage of an unknown revenue figure, or are they owed a fixed amount that was never defined? The contract is silent on which provision governs in case of a conflict.",
+      "confidence_calculation": {
+        "risk_certainty_value": 0.8,
+        "ebm_confidence": 1.0,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.8549999999999999
+      },
+      "confidence_score": 0.8549999999999999,
+      "confidence_level": "HIGH",
+      "routing_decision": "SENIOR_PARTNER_ESCALATION"
+    },
+    {
+      "finding_id": "finding_1",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Ambiguous Ownership of Intellectual Property Enhancements",
+      "risk_score": 0.7,
+      "risk_level": "HIGH",
+      "explanation": "Section 9.1 Work Product: 'All deliverables, materials, and work product created by the Contractor specifically for [Company Name] in the performance of services under this SOW shall be considered work made for hire and shall be the sole property of [Company Name].'\n\nvs\n\nSection 9.2 LLM Framework \u2014 Contractor IP: 'Any enhancements, adaptations, or derivatives of the Contractor IP developed during this engagement shall be addressed in the Second SOW or a separate IP agreement, should the parties elect to proceed with formal integration.'\n\nProblem: A conflict exists between the company's broad claim to all 'work product' and the deferral of ownership for 'enhancements' to the contractor's pre-existing IP. The company provides resources (data, infrastructure) to develop these enhancements for its benefit (e.g., as a pre-sales tool). This work could be defined as 'work product created...specifically for' the company under 9.1. However, 9.2 states ownership of these same enhancements will be decided later. If the parties do not proceed to a Second SOW, there is no mechanism to resolve ownership, creating a high risk of an IP dispute. The contractor could lose control of improvements to their core IP, or the company could lose rights to tools developed with its resources.",
+      "confidence_calculation": {
+        "risk_certainty_value": 0.8,
+        "ebm_confidence": 0.95,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.8374999999999999
+      },
+      "confidence_score": 0.8374999999999999,
+      "confidence_level": "HIGH",
+      "routing_decision": "SENIOR_PARTNER_ESCALATION"
+    },
+    {
+      "finding_id": "finding_2",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Contradictory and Missing Effective Dates",
+      "risk_score": 0.7,
+      "risk_level": "HIGH",
+      "explanation": "ENGAGEMENT OVERVIEW Table: 'Effective Date 3/30/26' and 'Initial Term Three (3) months \u2014 Trial Period ending 6/30/26'\n\nvs\n\nSection 5.1 Trial Period: 'The initial term of this engagement ('Trial Period') commences on [START DATE] and runs for three (3) months, through [END DATE].'\n\nProblem: The document provides specific, hard-coded dates in the overview table but uses undefined placeholders ('[START DATE]', '[END DATE]') in the main body of the contract (Section 5.1). This creates a legal inconsistency. While a court might infer the intended dates from the overview, the presence of placeholders in the operative clause creates ambiguity and suggests the agreement is an incomplete draft. This could be used by either party to dispute the official start or end date of the contract and its associated obligations.",
+      "confidence_calculation": {
+        "risk_certainty_value": 0.8,
+        "ebm_confidence": 1.0,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.8549999999999999
+      },
+      "confidence_score": 0.8549999999999999,
+      "confidence_level": "HIGH",
+      "routing_decision": "SENIOR_PARTNER_ESCALATION"
+    },
+    {
+      "finding_id": "finding_3",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Inconsistent Timeline and Conflicting First-Month Priorities",
+      "risk_score": 0.5,
+      "risk_level": "MEDIUM",
+      "explanation": "Section 2.1 LLM Assessment Deep Dive & Strategic Roadmap (Months 1\u20132): 'During the first two months of the engagement, our Chief Technology Officer and Chief Innovation Officer will work with contractor to conduct a more in-depth analysis of the contractor\u2019s LLM assessment framework...'\n\nvs\n\nSection 3, Milestones & Deliverables Table: The milestone '3 qualified early adopter prospects with signed LOIs' has a 'Target Date' of 'April 17, 2026'.\n\nProblem: The contract establishes conflicting primary objectives for the first month. Section 2.1 states that Months 1 and 2 are dedicated to a technical 'Deep Dive' on the LLM framework. However, the Milestone table in Section 3 demands a major pipeline development deliverable (3 signed LOIs) by April 17, 2026, which is less than three weeks after the March 30, 2026 start date. This sets up an unrealistic expectation and a conflict for the contractor's time and focus. It creates a high likelihood of failure on one or both fronts, leading to a dispute over performance.",
+      "confidence_calculation": {
+        "risk_certainty_value": 1.0,
+        "ebm_confidence": 0.9,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.89
+      },
+      "confidence_score": 0.89,
+      "confidence_level": "HIGH",
+      "routing_decision": "ANALYST_REVIEW"
+    },
+    {
+      "finding_id": "finding_4",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Ambiguous Milestone Success Metric",
+      "risk_score": 0.5,
+      "risk_level": "MEDIUM",
+      "explanation": "Section 3, Milestones & Deliverables Table: For the 'LLM assessment...' milestone at the 'End of Month 2', the Success Metric is 'LOI drafted by Company & expressing interest and intent to support development and market strategy in Q3'\n\nvs\n\nN/A\n\nProblem: The success metric is ambiguous and appears to be self-serving. It requires an 'LOI drafted by Company'. It is unclear if the Company is drafting this for itself to sign, or for a third party. If the Company itself is the one 'expressing interest', the metric is meaningless as the Company can declare success or failure at its sole discretion. This provides no objective measure of the contractor's performance. Since achieving milestones is a condition for discussing a 'Second SOW' (Section 5.2), the Company could use this vague metric to arbitrarily block progress toward a longer-term partnership.",
+      "confidence_calculation": {
+        "risk_certainty_value": 1.0,
+        "ebm_confidence": 0.9,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.89
+      },
+      "confidence_score": 0.89,
+      "confidence_level": "HIGH",
+      "routing_decision": "ANALYST_REVIEW"
+    },
+    {
+      "finding_id": "finding_5",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Ambiguous Definition of Milestone Revenue for Compensation Calculation",
+      "risk_score": 0.5,
+      "risk_level": "MEDIUM",
+      "explanation": "Section 3, Milestones & Deliverables Table: The compensation trigger for 'Contracts executed' is '3% of up-front revenue captured for early adopter cohort.'\n\nvs\n\nExhibit A, COMPENSATION SCHEDULE: The milestone is described as 'Signed contracts w/ monetary payment commitment.'\n\nProblem: The terms 'up-front revenue captured' and 'monetary payment commitment' are not defined. For a multi-year enterprise contract, the 'up-front' payment could be a small initial deposit, the first month's fee, or the entire first year's payment. This ambiguity creates a significant risk of dispute over the calculation of the contractor's bonus. For a $120,000 annual contract with a $10,000 up-front payment, the bonus could be either $300 (3% of $10k) or $3,600 (3% of $120k), depending on interpretation.",
+      "confidence_calculation": {
+        "risk_certainty_value": 1.0,
+        "ebm_confidence": 0.85,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.8724999999999999
+      },
+      "confidence_score": 0.8724999999999999,
+      "confidence_level": "HIGH",
+      "routing_decision": "ANALYST_REVIEW"
+    },
+    {
+      "finding_id": "finding_6",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Inconsistent and Missing Company Legal Name",
+      "risk_score": 0.7,
+      "risk_level": "HIGH",
+      "explanation": "ENGAGEMENT OVERVIEW: 'Client / Company UtopIQ, a Schmidt-Morgan Corporation'\n\nvs\n\nThroughout Document (e.g., Sec 5.2, 7, 9.1, Signatures): The company is referred to as '[Company Name]'.\n\nProblem: The document fails to consistently use the legal name of the contracting party. The header identifies 'UtopIQ, a Schmidt-Morgan Corporation', but the entire body and the signature line use the placeholder '[Company Name]'. This makes the contract legally deficient and potentially unenforceable. It is unclear who the obligations and rights belong to \u2014 UtopIQ or its parent company. A party wishing to exit the agreement could claim it was never properly executed by a defined legal entity.",
+      "confidence_calculation": {
+        "risk_certainty_value": 0.8,
+        "ebm_confidence": 1.0,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.8549999999999999
+      },
+      "confidence_score": 0.8549999999999999,
+      "confidence_level": "HIGH",
+      "routing_decision": "SENIOR_PARTNER_ESCALATION"
+    }
+  ]
+}

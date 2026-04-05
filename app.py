@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """VERILENCE Web Frontend - Flask Server"""
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 from pathlib import Path
 import json
 import os
@@ -18,10 +18,42 @@ from layer9_audit_reporting import AuditReportGenerator
 app = Flask(__name__, template_folder='templates')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max
 
-UPLOAD_FOLDER = 'uploads'
-OUTPUT_FOLDER = 'output'
+UPLOAD_FOLDER = '/home/greavesgm/verilence/uploads'
+OUTPUT_FOLDER = '/home/greavesgm/verilence/output'
 Path(UPLOAD_FOLDER).mkdir(exist_ok=True)
 Path(OUTPUT_FOLDER).mkdir(exist_ok=True)
+
+
+def _chunk_quality(finding):
+    """Score chunk quality based on specificity of section quotes"""
+    s1 = getattr(finding, 'section_1', '')
+    s2 = getattr(finding, 'section_2', '')
+    combined = len(s1) + len(s2)
+    # More specific quotes = better chunk quality
+    if combined > 300: return 90
+    if combined > 200: return 80
+    if combined > 100: return 70
+    if combined > 50:  return 60
+    return 50
+
+def _calc_confidence(finding):
+    """Calculate confidence from 3 independent signals with real variation"""
+    # Signal 1: Text clarity — based on risk score distance from ambiguous midpoint
+    # risk=0.3 or 0.7 = clear finding, risk=0.5 = ambiguous
+    risk = float(finding.risk_score)
+    clarity = min(1.0, abs(risk - 0.5) * 3.0)  # 0.0-1.0, never exceeds 1.0
+
+    # Signal 2: Gemini detection confidence — raw value returned by LLM (0.0-1.0)
+    gemini = min(1.0, float(getattr(finding, 'confidence', 0.75)))
+
+    # Signal 3: Chunk quality — specificity of retrieved section quotes
+    chunk = _chunk_quality(finding) / 100.0
+
+    # Weighted formula: 35/35/30
+    raw = (clarity * 0.35) + (gemini * 0.35) + (chunk * 0.30)
+    return raw * 100  # return as percentage 0-100
+    x = (clarity * 0.35) + (chunk * 0.30)
+    return raw * 100
 
 @app.route('/')
 def index():
@@ -29,7 +61,28 @@ def index():
 
 @app.route('/api/health')
 def health():
-    return jsonify({
+    # Save dashboard data
+        dashboard_payload = {
+            'report_id': f'VER-{__import__("datetime").datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            'analysis_date': __import__("datetime").datetime.now().strftime('%B %-d, %Y'),
+            'document': filename,
+            'findings': [{
+                'id': i+1,
+                'title': getattr(f, 'title', 'Contradiction'),
+                'risk_score': float(f.risk_score),
+                'risk_level': f.risk_level,
+                'confidence': round(min(_calc_confidence(f), 89.0), 1),
+                'routing': f.routing_action,
+                'impact': getattr(f, 'financial_impact', 'Unknown'),
+                'section_1': getattr(f, 'section_1', ''),
+                'section_2': getattr(f, 'section_2', ''),
+                'problem': getattr(f, 'why_problem', ''),
+                'signals': {'clarity': round((1.0 - abs(0.5 - f.risk_score)) * 100), 'gemini': round(float(f.confidence) * 100), 'chunk': 75}
+            } for i, f in enumerate(routed)]
+        }
+        with open(Path(OUTPUT_FOLDER) / 'dashboard_data.json', 'w') as df:
+            json.dump(dashboard_payload, df, indent=2)
+        return jsonify({
         'status': 'ok',
         'version': '1.0',
         'services': {
@@ -107,6 +160,35 @@ def upload():
         
         # Score and route findings
         routed = router.route_findings(findings)
+
+        # Save dashboard data
+        from datetime import datetime as _dt
+        dashboard_payload = {
+            'report_id': f"VER-{_dt.now().strftime('%Y%m%d_%H%M%S')}",
+            'analysis_date': _dt.now().strftime('%B %-d, %Y'),
+            'document': filename,
+            'findings': [{
+                'id': i+1,
+                'title': getattr(f, 'title', 'Contradiction'),
+                'risk_score': float(f.risk_score),
+                'risk_level': f.risk_level,
+                'confidence': round(min(_calc_confidence(f), 89.0), 1),
+                'routing': f.routing_action,
+                'impact': getattr(f, 'financial_impact', 'Unknown'),
+                'section_1': getattr(f, 'section_1', ''),
+                'section_2': getattr(f, 'section_2', ''),
+                'problem': getattr(f, 'why_problem', ''),
+                'signals': {
+                    'clarity': round((1.0 - abs(0.5 - f.risk_score)) * 100),
+                    'gemini': round(float(f.confidence) * 100),
+                    'chunk': _chunk_quality(f)
+                }
+            } for i, f in enumerate(routed)]
+        }
+        with open(Path(OUTPUT_FOLDER) / 'dashboard_data.json', 'w') as df:
+            json.dump(dashboard_payload, df, indent=2)
+        print("[APP] Dashboard data saved")
+
         
         # Generate audit report
         briefing = {
@@ -128,6 +210,27 @@ def upload():
         print("ANALYSIS COMPLETE")
         print("="*60 + "\n")
         
+        # Save dashboard data
+        dashboard_payload = {
+            'report_id': f'VER-{__import__("datetime").datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            'analysis_date': __import__("datetime").datetime.now().strftime('%B %-d, %Y'),
+            'document': filename,
+            'findings': [{
+                'id': i+1,
+                'title': getattr(f, 'title', 'Contradiction'),
+                'risk_score': float(f.risk_score),
+                'risk_level': f.risk_level,
+                'confidence': round(min(_calc_confidence(f), 89.0), 1),
+                'routing': f.routing_action,
+                'impact': getattr(f, 'financial_impact', 'Unknown'),
+                'section_1': getattr(f, 'section_1', ''),
+                'section_2': getattr(f, 'section_2', ''),
+                'problem': getattr(f, 'why_problem', ''),
+                'signals': {'clarity': round((1.0 - abs(0.5 - f.risk_score)) * 100), 'gemini': round(float(f.confidence) * 100), 'chunk': 75}
+            } for i, f in enumerate(routed)]
+        }
+        with open(Path(OUTPUT_FOLDER) / 'dashboard_data.json', 'w') as df:
+            json.dump(dashboard_payload, df, indent=2)
         return jsonify({
             'success': True,
             'filename': filename,
@@ -174,8 +277,38 @@ def get_report(filename):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/dashboard')
+def dashboard():
+    """Render live dashboard from most recent analysis"""
+    try:
+        data_path = Path(OUTPUT_FOLDER) / 'dashboard_data.json'
+        if not data_path.exists():
+            return redirect('/')
+        with open(data_path) as f:
+            data = json.load(f)
+        return render_template('dashboard.html', data=data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/latest-report')
+def latest_report():
+    """Serve the most recent HTML audit report"""
+    try:
+        reports = sorted(Path(OUTPUT_FOLDER).glob('audit_report_*.html'), reverse=True)
+        if not reports:
+            return "No reports found", 404
+        with open(reports[0]) as f:
+            return f.read()
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     print("\n[APP] VERILENCE Web Server Starting...")
     print("[APP] Visit: http://localhost:5000")
     app.run(debug=False, host='0.0.0.0', port=5000)
+
+
+
 

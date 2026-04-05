@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verilence — Risk Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f7f8fa;color:#1a1d23;font-family:'DM Sans',sans-serif;min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:#fff;border-bottom:1px solid #e5e7eb}
+.logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;letter-spacing:-0.01em}
+.logo span{color:#1a5eb8}
+.logo-tag{font-family:'DM Mono',monospace;font-size:0.6rem;color:#9ca3af;letter-spacing:0.12em;margin-left:8px;border:1px solid #e5e7eb;padding:2px 6px;border-radius:2px}
+.hdr-right{display:flex;align-items:center;gap:1.5rem;font-size:0.8rem;color:#6b7280}
+.hdr-right strong{color:#1a1d23}
+.status-pill{display:flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;font-size:0.7rem;padding:4px 10px;border-radius:20px;font-family:'DM Mono',monospace}
+.dot{width:6px;height:6px;background:#16a34a;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+main{padding:1.5rem 2rem 3rem;max-width:1400px;margin:0 auto}
+.doc-bar{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #e5e7eb;border-left:3px solid #1a5eb8;border-radius:0 8px 8px 0;padding:1rem 1.5rem;margin-bottom:1.5rem}
+.doc-name{font-size:0.95rem;font-weight:500;color:#1a1d23}
+.doc-sub{font-size:0.7rem;color:#9ca3af;margin-top:2px;letter-spacing:0.04em}
+.doc-actions{display:flex;gap:8px}
+.btn{font-size:0.7rem;padding:6px 14px;border-radius:6px;border:1px solid #d1d5db;background:#fff;color:#6b7280;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-family:'DM Sans',sans-serif}
+.btn:hover{border-color:#1a5eb8;color:#1a5eb8}
+.btn-primary{background:#1a5eb8;border-color:#1a5eb8;color:#fff;font-weight:500}
+.btn-primary:hover{background:#1550a0;color:#fff}
+.kpi-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:1.5rem}
+.kpi{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:1rem 1.25rem}
+.kpi-label{font-size:0.65rem;color:#9ca3af;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;font-family:'DM Mono',monospace}
+.kpi-val{font-size:1.9rem;font-weight:500;line-height:1;font-family:'Playfair Display',serif}
+.kpi-sub{font-size:0.7rem;color:#9ca3af;margin-top:4px}
+.two-col{display:grid;grid-template-columns:1fr 300px;gap:1rem;margin-bottom:1rem}
+.panel{background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden}
+.panel-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid #e5e7eb}
+.panel-title{font-size:0.65rem;font-weight:500;color:#6b7280;letter-spacing:0.1em;text-transform:uppercase;font-family:'DM Mono',monospace}
+.panel-body{padding:1rem}
+.routing-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.badge{font-size:0.65rem;padding:3px 8px;border-radius:4px;min-width:110px;text-align:center;font-family:'DM Mono',monospace}
+.badge-esc{background:#fef2f2;color:#991f1f}
+.badge-ana{background:#fffbeb;color:#854f0b}
+.badge-auto{background:#f0fdf4;color:#27500a}
+.bar-track{flex:1;height:5px;background:#f3f4f6;border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1)}
+.rcount{font-size:0.75rem;color:#6b7280;min-width:16px;text-align:right;font-weight:500}
+.sig-row{display:flex;justify-content:space-between;font-size:0.75rem;color:#6b7280;padding:5px 0;border-bottom:1px solid #f3f4f6}
+.sig-row:last-child{border:none}
+.sig-val{font-weight:500;color:#1a5eb8}
+.calib{background:#f8faff;border-radius:6px;padding:8px 10px;margin-top:10px;font-size:0.7rem;color:#9ca3af;line-height:1.5}
+.calib-lbl{font-size:0.6rem;color:#1a5eb8;letter-spacing:0.08em;margin-bottom:2px;font-weight:500;font-family:'DM Mono',monospace}
+.findings-panel{background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:0.8rem}
+thead th{font-size:0.65rem;font-weight:500;color:#9ca3af;letter-spacing:0.08em;padding:10px 16px;text-align:left;border-bottom:1px solid #e5e7eb;font-family:'DM Mono',monospace}
+tbody tr{border-bottom:1px solid #f3f4f6;cursor:pointer;transition:background 0.1s}
+tbody tr:last-child{border:none}
+tbody tr:hover{background:#f9fafb}
+tbody td{padding:12px 16px;color:#6b7280;vertical-align:middle}
+.f-title{color:#1a1d23;font-size:0.8rem;font-weight:500;max-width:280px}
+.chip{display:inline-flex;align-items:center;font-size:0.65rem;padding:3px 8px;border-radius:4px;font-weight:500;font-family:'DM Mono',monospace}
+.chip-high{background:#fef2f2;color:#991f1f}
+.chip-medium{background:#fffbeb;color:#854f0b}
+.chip-low{background:#f0fdf4;color:#27500a}
+.chip-analyst{background:#fffbeb;color:#854f0b}
+.chip-escalate{background:#fef2f2;color:#991f1f}
+.chip-auto{background:#f0fdf4;color:#27500a}
+.conf-wrap{display:flex;align-items:center;gap:6px}
+.conf-track{width:48px;height:3px;background:#e5e7eb;border-radius:2px;overflow:hidden}
+.conf-fill{height:100%;background:#1a5eb8;border-radius:2px}
+.expand-row{display:none;background:#f9fafb}
+.expand-row.open{display:table-row}
+.expand-inner{padding:14px 16px 18px;border-top:1px solid #e5e7eb}
+.expand-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.exp-lbl{font-size:0.6rem;color:#9ca3af;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;font-weight:500;font-family:'DM Mono',monospace}
+.exp-txt{font-size:0.75rem;color:#6b7280;line-height:1.6}
+.sec-quote{background:#fff;border-left:2px solid #1a5eb8;padding:6px 10px;font-size:0.7rem;color:#6b7280;margin-bottom:6px;line-height:1.5;border-radius:0 4px 4px 0}
+footer{display:flex;justify-content:space-between;margin-top:2rem;padding-top:1rem;border-top:1px solid #e5e7eb;font-size:0.7rem;color:#9ca3af}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <span class="logo">VERI<span>LENCE</span></span>
+    <span class="logo-tag">GLASS BOX AI</span>
+  </div>
+  <div class="hdr-right">
+    <span>Report ID: <strong>{{ data.report_id }}</strong></span>
+    <span>{{ data.analysis_date }}</span>
+    <div class="status-pill"><div class="dot"></div>Analysis complete</div>
+  </div>
+</header>
+
+<main>
+
+  <div class="doc-bar">
+    <div>
+      <div class="doc-name">{{ data.document }}</div>
+      <div class="doc-sub">Joint Operating Agreement &nbsp;·&nbsp; EBM + LLM Synthesis &nbsp;·&nbsp; Gemini 2.5 Pro</div>
+    </div>
+    <div class="doc-actions">
+      <a href="/latest-report" class="btn">View full report</a>
+      <a href="/" class="btn">New analysis</a>
+      <button class="btn btn-primary" onclick="exportCSV()">Export CSV</button>
+    </div>
+  </div>
+
+  {% set total = data.findings | length %}
+  {% set high = data.findings | selectattr('risk_level','equalto','HIGH') | list | length %}
+  {% set medium = data.findings | selectattr('risk_level','equalto','MEDIUM') | list | length %}
+  {% set low = data.findings | selectattr('risk_level','equalto','LOW') | list | length %}
+  {% set avg_conf = (data.findings | sum(attribute='confidence') / total) | round(1) if total > 0 else 0 %}
+  {% set escalate = data.findings | selectattr('routing','equalto','SENIOR_PARTNER_ESCALATION') | list | length %}
+  {% set analyst = data.findings | selectattr('routing','equalto','ANALYST_REVIEW') | list | length %}
+  {% set auto = data.findings | selectattr('routing','equalto','AUTO_APPROVE') | list | length %}
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Findings</div>
+      <div class="kpi-val">{{ total }}</div>
+      <div class="kpi-sub">Contradictions detected</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">High Risk</div>
+      <div class="kpi-val" style="color:#991f1f">{{ high }}</div>
+      <div class="kpi-sub">Senior partner escalation</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Medium Risk</div>
+      <div class="kpi-val" style="color:#854f0b">{{ medium }}</div>
+      <div class="kpi-sub">Analyst review required</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Low Risk</div>
+      <div class="kpi-val" style="color:#27500a">{{ low }}</div>
+      <div class="kpi-sub">Auto-approve eligible</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Avg Confidence</div>
+      <div class="kpi-val" style="color:#1a5eb8">{{ avg_conf }}%</div>
+      <div class="kpi-sub">Across all findings</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Est. Time Saved</div>
+      <div class="kpi-val" style="color:#0f766e">14.5<span style="font-size:1rem;font-weight:400"> hrs</span></div>
+      <div class="kpi-sub">vs. manual attorney review</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Est. Cost Saved</div>
+      <div class="kpi-val" style="color:#0f766e">$3,625</div>
+      <div class="kpi-sub">@ $250/hr · 15 hr manual review</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-hdr">
+        <div class="panel-title">Risk × Confidence Matrix</div>
+        <div style="font-size:0.65rem;color:#9ca3af">Hover bubbles for details</div>
+      </div>
+      <div class="panel-body">
+        <div style="position:relative;width:100%;height:260px">
+          <canvas id="vrlMatrix"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hdr"><div class="panel-title">Routing Breakdown</div></div>
+      <div class="panel-body">
+        <div class="routing-row">
+          <div class="badge badge-esc">Senior partner</div>
+          <div class="bar-track"><div class="bar-fill" id="barEsc" style="width:0%;background:#e24b4a"></div></div>
+          <div class="rcount">{{ escalate }}</div>
+        </div>
+        <div class="routing-row">
+          <div class="badge badge-ana">Analyst review</div>
+          <div class="bar-track"><div class="bar-fill" id="barAna" style="width:0%;background:#ef9f27"></div></div>
+          <div class="rcount">{{ analyst }}</div>
+        </div>
+        <div class="routing-row">
+          <div class="badge badge-auto">Auto approve</div>
+          <div class="bar-track"><div class="bar-fill" id="barAuto" style="width:0%;background:#639922"></div></div>
+          <div class="rcount">{{ auto }}</div>
+        </div>
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid #f3f4f6">
+          <div class="panel-title" style="margin-bottom:8px">Signal Weights</div>
+          <div class="sig-row"><span>Text clarity</span><span class="sig-val">35%</span></div>
+          <div class="sig-row"><span>Gemini 2.5 Pro</span><span class="sig-val">35%</span></div>
+          <div class="sig-row"><span>Chunk quality</span><span class="sig-val">30%</span></div>
+          <div class="calib">
+            <div class="calib-lbl">Calibration Status</div>
+            Uncalibrated — initial weights. Will adjust after 10+ pilot analyses with operator feedback.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="findings-panel">
+    <div class="panel-hdr">
+      <div class="panel-title">Findings Detail</div>
+      <div style="font-size:0.65rem;color:#9ca3af">Click any row to expand</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Finding</th>
+          <th>Risk score</th>
+          <th>Confidence</th>
+          <th>Routing</th>
+          <th>Financial impact</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in data.findings %}
+        <tr onclick="toggleExpand({{ loop.index0 }})">
+          <td style="color:#9ca3af;font-size:0.75rem">{{ f.id }}</td>
+          <td><div class="f-title">{{ f.title }}</div></td>
+          <td>
+            <span class="chip {% if f.risk_level == 'HIGH' %}chip-high{% elif f.risk_level == 'MEDIUM' %}chip-medium{% else %}chip-low{% endif %}">
+              {{ "%.2f"|format(f.risk_score) }}
+            </span>
+          </td>
+          <td>
+            <div class="conf-wrap">
+              <div class="conf-track"><div class="conf-fill" style="width:{{ f.confidence }}%"></div></div>
+              <span style="font-size:0.75rem;font-weight:500">{{ f.confidence }}%</span>
+            </div>
+          </td>
+          <td>
+            <span class="chip {% if f.routing == 'SENIOR_PARTNER_ESCALATION' %}chip-escalate{% elif f.routing == 'ANALYST_REVIEW' %}chip-analyst{% else %}chip-auto{% endif %}">
+              {% if f.routing == 'SENIOR_PARTNER_ESCALATION' %}Senior partner
+              {% elif f.routing == 'ANALYST_REVIEW' %}Analyst review
+              {% else %}Auto approve{% endif %}
+            </span>
+          </td>
+          <td style="font-size:0.75rem;max-width:160px">{{ f.impact }}</td>
+        </tr>
+        <tr class="expand-row" id="exp-{{ loop.index0 }}">
+          <td colspan="6">
+            <div class="expand-inner">
+              <div class="expand-grid">
+                <div>
+                  <div class="exp-lbl">Section 1</div>
+                  <div class="sec-quote">{{ f.section_1 }}</div>
+                  <div class="exp-lbl" style="margin-top:8px">Section 2</div>
+                  <div class="sec-quote">{{ f.section_2 }}</div>
+                </div>
+                <div>
+                  <div class="exp-lbl">Why it matters</div>
+                  <div class="exp-txt">{{ f.problem }}</div>
+                </div>
+                <div>
+                  <div class="exp-lbl">Confidence signals</div>
+                  <div class="sig-row"><span>Text clarity</span><span class="sig-val">{{ f.signals.clarity }}%</span></div>
+                  <div class="sig-row"><span>Gemini 2.5 Pro</span><span class="sig-val">{{ f.signals.gemini }}%</span></div>
+                  <div class="sig-row"><span>Chunk quality</span><span class="sig-val">{{ f.signals.chunk }}%</span></div>
+                  <div style="margin-top:8px;padding:8px;background:#fff;border-radius:4px;font-size:0.7rem;color:#6b7280;border:1px solid #e5e7eb">
+                    Total: <strong style="color:#1a5eb8">{{ f.confidence }}%</strong> &nbsp;·&nbsp;
+                    Routing: <strong style="color:#1a1d23">{{ f.routing.replace('_',' ') }}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <span>VERILENCE LLC &nbsp;·&nbsp; Glass Box AI &nbsp;·&nbsp; Richmond, VA</span>
+    <span>Proprietary &nbsp;·&nbsp; Not legal advice &nbsp;·&nbsp; {{ data.report_id }}</span>
+  </footer>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const findings = {{ data.findings | tojson }};
+
+function riskColor(level) {
+  if(level==='HIGH') return '#e24b4a';
+  if(level==='MEDIUM') return '#ef9f27';
+  return '#639922';
+}
+
+const ctx = document.getElementById('vrlMatrix').getContext('2d');
+new Chart(ctx, {
+  type: 'bubble',
+  data: {
+    datasets: findings.map(f => ({
+      label: f.title,
+      data: [{ x: f.risk_score + (Math.random()-0.5)*0.04, y: f.confidence + (Math.random()-0.5)*2, r: 14 }],
+      backgroundColor: riskColor(f.risk_level) + '44',
+      borderColor: riskColor(f.risk_level),
+      borderWidth: 2
+    }))
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          title: ctx => findings[ctx[0].datasetIndex].title,
+          label: ctx => {
+            const f = findings[ctx.datasetIndex];
+            return [' Risk: '+f.risk_score.toFixed(2), ' Confidence: '+f.confidence+'%'];
+          }
+        }
+      }
+    },
+    scales: {
+      x: { title:{display:true,text:'Risk score',font:{size:11},color:'#9ca3af'}, min:0.1, max:0.95, ticks:{font:{size:11},color:'#9ca3af',callback:v=>v.toFixed(1)}, grid:{color:'#f3f4f6'} },
+      y: { title:{display:true,text:'Confidence (%)',font:{size:11},color:'#9ca3af'}, min:60, max:105, ticks:{font:{size:11},color:'#9ca3af',callback:v=>v+'%'}, grid:{color:'#f3f4f6'} }
+    },
+    layout: { padding: 10 }
+  }
+});
+
+const total = findings.length;
+const escalate = findings.filter(f=>f.routing==='SENIOR_PARTNER_ESCALATION').length;
+const analyst = findings.filter(f=>f.routing==='ANALYST_REVIEW').length;
+const auto = findings.filter(f=>f.routing==='AUTO_APPROVE').length;
+setTimeout(() => {
+  document.getElementById('barEsc').style.width = (escalate/total*100)+'%';
+  document.getElementById('barAna').style.width = (analyst/total*100)+'%';
+  document.getElementById('barAuto').style.width = (auto/total*100)+'%';
+}, 200);
+
+function toggleExpand(i) {
+  document.getElementById('exp-'+i).classList.toggle('open');
+}
+
+function exportCSV() {
+  const rows = [['ID','Title','Risk Score','Risk Level','Confidence','Routing','Financial Impact']];
+  findings.forEach(f => rows.push([f.id, '"'+f.title+'"', f.risk_score, f.risk_level, f.confidence+'%', f.routing, '"'+f.impact+'"']));
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download = 'verilence_findings.csv';
+  a.click();
+}
+</script>
+</body>
+</html>

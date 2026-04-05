@@ -1,0 +1,135 @@
+{
+  "report_id": "VER-20260405_231944",
+  "generated_timestamp": "2026-04-05T23:19:44.173164",
+  "query": "contradiction detection",
+  "timestamp": "20260405_231944",
+  "total_findings": 7,
+  "summary": "Analyzed 4 chunks. Found 7 contradictions.",
+  "document_metadata": {
+    "document_name": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+    "analysis_timestamp": "2026-04-05T23:19:44.173178",
+    "gemini_model": "gemini-2.5-pro",
+    "confidence_calibration": "Uncalibrated - will adjust after 10+ pilot analyses"
+  },
+  "findings": [
+    {
+      "finding_id": "finding_0",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Contradictory Milestone Compensation for Executed Contracts",
+      "risk_score": 0.7,
+      "risk_level": "HIGH",
+      "explanation": "Section 3. Milestones & Deliverables: The table lists the compensation trigger for the 'Contracts executed \u2014 early adopter cohort' milestone as '3% of up-front revenue captured for early adopter cohort'.\n\nvs\n\nEXHIBIT A \u2014 COMPENSATION SCHEDULE: The table lists the bonus amount for the 'Signed contracts w/ monetary payment' milestone (same date: May 27, 2026) as '$__________'.\n\nProblem: There is a direct conflict between how the compensation for the May 27 milestone is calculated. Section 3 specifies a formula (3% of revenue), while Exhibit A provides a specific, but blank, dollar amount. This guarantees a dispute over payment. The Contractor will demand 3% of revenue, while the Company could argue the intended amount was never agreed upon and is therefore $0. Exhibit A appears to be the controlling schedule for cash payments, making the blank field particularly problematic.",
+      "confidence_calculation": {
+        "risk_certainty_value": 0.8,
+        "ebm_confidence": 1.0,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.8549999999999999
+      },
+      "confidence_score": 0.8549999999999999,
+      "confidence_level": "HIGH",
+      "routing_decision": "SENIOR_PARTNER_ESCALATION"
+    },
+    {
+      "finding_id": "finding_1",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Deferred Ownership of Intellectual Property Derivatives",
+      "risk_score": 0.7,
+      "risk_level": "HIGH",
+      "explanation": "Section 2.1 LLM Assessment Deep Dive & Strategic Roadmap: The SOW requires the Company to 'support development of the roadmap to achieve MVP' and provide 'infrastructure, data and testing environment to complete' work on the Contractor's framework.\n\nvs\n\nSection 9.2 LLM Framework \u2014 Contractor IP: 'Any enhancements, adaptations, or derivatives of the Contractor IP developed during this engagement shall be addressed in the Second SOW or a separate IP agreement, should the parties elect to proceed with formal integration.'\n\nProblem: The agreement mandates joint work on the Contractor's proprietary IP but punts the critical decision of who owns the resulting improvements ('derivatives') to a future, non-guaranteed agreement. This is an 'agreement to agree,' which is often legally unenforceable. If the relationship sours and no second SOW is signed, both parties could lay claim to the enhancements made during the trial period, leading to costly litigation. The company performed work and provided resources, but it's based on the contractor's pre-existing IP.",
+      "confidence_calculation": {
+        "risk_certainty_value": 0.8,
+        "ebm_confidence": 1.0,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.8549999999999999
+      },
+      "confidence_score": 0.8549999999999999,
+      "confidence_level": "HIGH",
+      "routing_decision": "SENIOR_PARTNER_ESCALATION"
+    },
+    {
+      "finding_id": "finding_2",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Contradictory Agreement Term Dates",
+      "risk_score": 0.7,
+      "risk_level": "HIGH",
+      "explanation": "ENGAGEMENT OVERVIEW: 'Effective Date 3/30/26' and 'Initial Term Three (3) months \u2014 Trial Period ending 6/30/26'.\n\nvs\n\nSection 5.1 Trial Period: 'The initial term of this engagement (\"Trial Period\") commences on [START DATE] and runs for three (3) months, through [END DATE].'\n\nProblem: The document contains both specific, defined dates for the start and end of the agreement and placeholder fields for the same information. If the agreement is signed on a date other than 3/30/26, the placeholders create a direct contradiction. This ambiguity could be exploited by either party to dispute the timing of milestone deadlines, payment obligations, or the termination date of the agreement.",
+      "confidence_calculation": {
+        "risk_certainty_value": 0.8,
+        "ebm_confidence": 1.0,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.8549999999999999
+      },
+      "confidence_score": 0.8549999999999999,
+      "confidence_level": "HIGH",
+      "routing_decision": "SENIOR_PARTNER_ESCALATION"
+    },
+    {
+      "finding_id": "finding_3",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Ambiguous Compensation for Key Milestones",
+      "risk_score": 0.5,
+      "risk_level": "MEDIUM",
+      "explanation": "Section 3. Milestones & Deliverables: The 'Compensation Trigger' column for two milestones ('3 qualified early adopter prospects with signed LOIs' and 'Formal early adopter selection complete') contains only a dash ('-').\n\nvs\n\nEXHIBIT A \u2014 COMPENSATION SCHEDULE: This exhibit, which details cash incentives, makes no mention of any payments for the April 17 or May 8 milestones.\n\nProblem: The use of a dash is ambiguous. It could mean '$0', 'To Be Determined', 'Not Applicable', or it could simply be a formatting error where a value was omitted. The Contractor could reasonably argue that some form of compensation was intended but not specified, while the Company will argue it means no cash compensation is due. This lack of clarity creates a high potential for a dispute over whether these milestones carry any financial incentive.",
+      "confidence_calculation": {
+        "risk_certainty_value": 1.0,
+        "ebm_confidence": 0.95,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.9074999999999999
+      },
+      "confidence_score": 0.9074999999999999,
+      "confidence_level": "HIGH",
+      "routing_decision": "ANALYST_REVIEW"
+    },
+    {
+      "finding_id": "finding_4",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Unclear Success Metric for LLM Milestone",
+      "risk_score": 0.5,
+      "risk_level": "MEDIUM",
+      "explanation": "Section 2.1 LLM Assessment Deep Dive & Strategic Roadmap: The stated goal is to 'produce a targeted Q3 roadmap and initial test results that demonstrate whether and how the LLM assessment framework can be formally incorporated...'\n\nvs\n\nSection 3. Milestones & Deliverables: The 'Success Metric' for the corresponding 'LLM assessment' milestone is 'LOI drafted by Company & expressing interest and intent to support development and market strategy in Q3'.\n\nProblem: The success metric is ambiguous and does not align with the goal. Who is the LOI from? An external partner? A customer? Or is it an internal, non-binding document from the Company to the Contractor? An 'LOI drafted by Company' is not a standard, objective measure of technical and marketing feasibility. The Contractor could meet the actual goal (producing a roadmap and test results) but fail to trigger the milestone if the Company decides, for any reason, not to draft this vaguely defined 'LOI', putting the Contractor's non-cash compensation at risk.",
+      "confidence_calculation": {
+        "risk_certainty_value": 1.0,
+        "ebm_confidence": 0.9,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.89
+      },
+      "confidence_score": 0.89,
+      "confidence_level": "HIGH",
+      "routing_decision": "ANALYST_REVIEW"
+    },
+    {
+      "finding_id": "finding_5",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Incomplete Termination Clause",
+      "risk_score": 0.5,
+      "risk_level": "MEDIUM",
+      "explanation": "Section 10. Termination: 'In the event of termination by [Company Name] without cause, the Contractor shall retain any milestone bonuses earned through the date of termination.'\n\nvs\n\nSection 10. Termination: The clause is silent on the consequences of (a) termination by the Company *for cause*, or (b) termination by the Contractor.\n\nProblem: The termination clause only addresses one of several possible scenarios. It fails to specify what happens to earned but unpaid bonuses if the Contractor quits or if the Company fires him for cause (e.g., breach of confidentiality). This omission creates uncertainty. For instance, if the Contractor achieves the $30,000 bonus milestone and then immediately resigns, it is unclear if the Company is obligated to pay him. This ambiguity invites disputes upon any termination event other than a 'without cause' termination by the Company.",
+      "confidence_calculation": {
+        "risk_certainty_value": 1.0,
+        "ebm_confidence": 0.9,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.89
+      },
+      "confidence_score": 0.89,
+      "confidence_level": "HIGH",
+      "routing_decision": "ANALYST_REVIEW"
+    },
+    {
+      "finding_id": "finding_6",
+      "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+      "title": "Ambiguous Contracting Entity",
+      "risk_score": 0.5,
+      "risk_level": "MEDIUM",
+      "explanation": "ENGAGEMENT OVERVIEW: The client is identified as 'Client / Company UtopIQ, a Schmidt-Morgan Corporation'.\n\nvs\n\nMultiple Sections (e.g., 5.2, 6.1, 7, 9.1, 12): The agreement repeatedly uses the placeholder '[Company Name]' to refer to the client, including in the signature block.\n\nProblem: The failure to consistently and accurately name the contracting party creates legal ambiguity. 'UtopIQ' and 'Schmidt-Morgan Corporation' are likely distinct legal entities. Is the contract with the subsidiary (UtopIQ) or the parent corporation? In the event of a dispute or default, the Contractor may not be sure which entity to sue, and the parent corporation could argue that it has no liability under the agreement. This is a critical drafting error that affects the enforceability of the entire contract.",
+      "confidence_calculation": {
+        "risk_certainty_value": 1.0,
+        "ebm_confidence": 1.0,
+        "retrieval_score": 0.75,
+        "final_confidence": 0.9249999999999999
+      },
+      "confidence_score": 0.9249999999999999,
+      "confidence_level": "HIGH",
+      "routing_decision": "ANALYST_REVIEW"
+    }
+  ]
+}

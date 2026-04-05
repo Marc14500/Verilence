@@ -16,13 +16,19 @@ class ConfidenceRouter:
             confidence = getattr(finding, 'confidence_score', getattr(finding, 'confidence', 0.5))
             risk_level = getattr(finding, 'risk_level', 'MEDIUM')
             
-            # Determine routing based on confidence
-            if confidence > 0.85:
-                routing = 'AUTO_APPROVE'
+            # Determine routing based on risk level AND confidence
+            risk_score = getattr(finding, 'risk_score', 0.5)
+            if risk_score >= 0.7:
+                routing = 'SENIOR_PARTNER_ESCALATION'
+            elif confidence > 0.85:
+                routing = 'ANALYST_REVIEW'
             elif confidence > 0.60:
                 routing = 'ANALYST_REVIEW'
             else:
                 routing = 'SENIOR_PARTNER_ESCALATION'
+            # Only auto-approve genuinely low risk findings
+            if risk_score < 0.4 and confidence > 0.85:
+                routing = 'AUTO_APPROVE'
             
             # Update finding with routing
             finding.routing_action = routing
