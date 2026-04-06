@@ -1,73 +1,39 @@
 {
-  "report_id": "VER-20260406_002437",
+  "report_id": "VER-20260406_005155",
   "analysis_date": "April 6, 2026",
   "document": "Exxon purchase agreement.pdf",
   "findings": [
     {
       "id": 1,
-      "title": "Conflicting Settlement Timing for Title Defect Adjustments",
-      "risk_score": 0.57,
-      "risk_level": "HIGH",
-      "confidence": 67.6,
+      "title": "Conflicting Statements on Interest Accrual for Purchase Price",
+      "risk_score": 0.42,
+      "risk_level": "MEDIUM",
+      "confidence": 70.4,
       "routing": "ANALYST_REVIEW",
-      "impact": "This could significantly impact cash flow at Closing. If the Seller elects to cure Title Defects with a total Title Defect Amount of $15,000,000, the Purchaser would expect to pay that much less at Closing under Section 3.4(d). Under Section 4.3, the Purchaser must pay the full amount and only receive a refund post-closing if the cure fails. The financial impact is the difference in cash required at closing, which could be in the tens of millions of dollars.",
-      "section_1": "Section 3.4(d): All Adjustments to the Purchase Price except for Section 3.2(i) shall be settled in cash at Closing between the Parties, as provided in Section 10.2, and subject to final adjustments as provided in Section 12.1.",
-      "section_2": "Section 4.3: ...if Seller so elects, then Seller shall have ninety (90) days following Closing in which to cure (the \u201cCure Period\u201d)... No adjustment to the Purchase Price will be made at Closing for any Title Defect that Seller elects to attempt to cure... If any such uncured Title Defect remains uncured at the end of the Cure Period, then... an adjustment to the Purchase Price in an amount equal to the applicable Title Defect Amount will be made as part of the Final Settlement Statement.",
-      "problem": "These sections create a direct contradiction regarding the timing of purchase price adjustments for Title Defects that the Seller chooses to cure. Section 3.4(d) mandates that all such adjustments (which are defined in Section 3.3) are settled in cash at Closing. However, Section 4.3 explicitly forbids an adjustment at Closing for these specific defects and defers the potential adjustment until a post-closing Final Settlement Statement. This creates uncertainty about the amount of cash required from the Purchaser at Closing and could lead to a dispute over closing mechanics.",
+      "impact": "Requires legal assessment. The conflict concerns whether a ten percent (10%) annual interest rate applies to the Down Payment, which is defined as three percent (3%) of the total Purchase Price. The total Purchase Price is not specified in the provided text.",
+      "section_1": "Section reference not provided: 'The Purchase Price shall ... (ii) shall bear Interest compounded annually up to (and including) the Actual Payment Date as provided in Section 3.4 of this Agreement and as further provided in the Senior Secured Term Loan Agreement'",
+      "section_2": "Section 3.4(a): 'At Closing, Purchaser shall pay to Sellers, by wire transfer of immediately available funds to an account designated by Sellers, the Down Payment, which Down Payment shall not bear Interest;'",
+      "problem": "One section states that the entire Purchase Price shall bear interest. However, Section 3.4(a) explicitly states that the Down Payment, which is defined as a percentage of the Purchase Price, shall not bear interest. This creates a direct contradiction regarding whether the Down Payment portion of the Purchase Price accrues interest.",
       "signals": {
-        "clarity": 93,
-        "gemini": 95,
+        "clarity": 92,
+        "gemini": 100,
         "chunk": 75
       }
     },
     {
       "id": 2,
-      "title": "Ambiguity of Recourse for Known but Unreported Title Defects",
-      "risk_score": 0.61,
+      "title": "Conflicting Language for Title Benefit Calculation in Closing Conditions",
+      "risk_score": 0.66,
       "risk_level": "HIGH",
-      "confidence": 68.3,
+      "confidence": 75.3,
       "routing": "ANALYST_REVIEW",
-      "impact": "The financial impact is the full, uncompensated value of any Title Defect that falls into this gap. If a Title Defect has a value of $5,000,000 and the Purchaser becomes aware of it but misses the 45-day reporting deadline, they would have zero recourse against the Seller and would absorb the entire loss.",
-      "section_1": "Section 4.3: ...Purchaser shall be deemed to have waived, and Seller shall have no liability for, any Title Defect that Purchaser fails to assert as a Title Defect by a Title Defect Notice received by Seller on or before the Defect Notice Date.",
-      "section_2": "Section 4.2(c)(iii): Purchaser shall not be entitled to protection under Seller\u2019s special warranty of Defensible Title to the Scheduled Properties in Section 4.2(b), with respect to (A) any matter of which Purchaser or any of its Affiliates had Knowledge prior to the Defect Notice Date...",
-      "problem": "This creates a potential 'trap' where the Purchaser can be left with no remedy for a known Title Defect. If the Purchaser has 'Knowledge' (a defined term) of a defect before the Defect Notice Date but fails to submit a timely notice, Section 4.3 states the pre-closing remedy is waived. Section 4.2(c)(iii) then explicitly bars the Purchaser from using the post-closing special warranty for that same defect. While likely intentional, this structure can lead to significant disputes over what constitutes 'Knowledge' and when it was obtained, potentially leaving the Purchaser to bear the full cost of a material defect it discovered during diligence but failed to properly report.",
+      "impact": "Requires legal assessment. The ambiguity could determine whether a $75,000,000 closing condition is met, potentially giving one party the right to terminate the agreement.",
+      "section_1": "Section 8.x: '...minus (e) the aggregate Title Benefit Amounts of all Title Benefits (exceeding the Individual Title Defect Threshold and the Aggregate Title Defect Deductible), shall be less than Seventy-Five Million Dollars ($75,000,000).'",
+      "section_2": "Section 9.x: '...(subject to the Individual Title Defect Threshold and the Aggregate Title Defect Deductible), shall be less than Seventy-Five Million Dollars ($75,000,000).'",
+      "problem": "Two sections, which appear to be reciprocal closing conditions, use different language to describe how Title Benefits are calculated against a $75,000,000 threshold. One section requires counting only those benefits 'exceeding' certain thresholds, which is a clear mathematical condition. The other section uses the more ambiguous phrase 'subject to' the thresholds, creating a potential conflict over which Title Benefits should be included in the calculation.",
       "signals": {
-        "clarity": 89,
-        "gemini": 85,
-        "chunk": 75
-      }
-    },
-    {
-      "id": 3,
-      "title": "Omission of Interest on Post-Closing Settlement Adjustments",
-      "risk_score": 0.68,
-      "risk_level": "MEDIUM",
-      "confidence": 77.4,
-      "routing": "ANALYST_REVIEW",
-      "impact": "Depends on the size of the final settlement and the time required to finalize it. If the final statement shows Purchaser owes Seller an additional $10,000,000 for revenues Seller received, and it takes 90 days post-closing to finalize and pay, Seller loses the time value of that money. At a 5% annual interest rate, this would be a loss of approximately $125,000 for the Seller.",
-      "section_1": "Section 3.4(c): The Senior Secured Term Loan Agreement shall also provide that (i) Interest shall accrue and be payable on the Principal Amount from the Effective Time up to (and including) the Actual Payment Date...",
-      "section_2": "Section 12.1 Post-Closing Settlement Statement: (This section, referenced but not fully quoted, outlines the process for a final true-up of adjustments, which will result in a final cash payment between the parties months after closing).",
-      "problem": "The agreement is ambiguous due to an omission. It explicitly states that 'Interest' accrues on the financed 'Principal Amount' of the Purchase Price. However, it is silent on whether interest accrues on the net amount owed from the final cash settlement determined post-closing (per Sections 10.2 and 12.1). This settlement reconciles revenues, operating expenses, and other items between the Effective Time and Closing. If this true-up results in a large payment owed by one party to the other, the paying party effectively gets an interest-free loan from the other for the several months it takes to finalize the statement.",
-      "signals": {
-        "clarity": 82,
+        "clarity": 84,
         "gemini": 90,
-        "chunk": 75
-      }
-    },
-    {
-      "id": 4,
-      "title": "Potential Conflict Between General and Specific 'Exclusive Remedy' Clauses",
-      "risk_score": 0.51,
-      "risk_level": "MEDIUM",
-      "confidence": 54.3,
-      "routing": "ANALYST_REVIEW",
-      "impact": "The financial impact is the difference in recovery between the two regimes. For example, if a title issue is valued at $9,000,000, it would be below the $10,000,000 'Aggregate Title Defect Deductible' in Section 4.6, resulting in $0 recovery. If the Purchaser could successfully argue it's a breach of representation claim under Article XI (which may have a much lower deductible), they might recover a significant portion of that $9,000,000. The ambiguity creates a financial incentive to litigate the characterization of the claim.",
-      "section_1": "Section 11.6 Exclusive Remedy: The indemnification provisions of this ARTICLE XI shall be the sole and exclusive remedies of the Parties... for any and all Losses... arising from, based upon, related to, or associated with this Agreement... including any breach of any representation, warranty, covenant, or agreement...",
-      "section_2": "Section 4.4 Remedies for Title Defects: ...the provisions set forth in this Section 4.4 shall be the sole and exclusive right and remedy of Purchaser with respect to any Title Defect or any other title matter with respect to any Asset...",
-      "problem": "The existence of multiple 'sole and exclusive remedy' clauses creates a potential ambiguity. While courts typically rule that a specific clause (like the one for Title Defects) governs its specific subject matter over a general clause, a dispute could arise. A party might try to characterize a single issue as both a 'Title Defect' (subject to the high thresholds and deductibles in Section 4.6) and a 'breach of representation' (e.g., Section 5.19 regarding Leases) to try and access the more favorable remedy regime under Article XI. This could lead to litigation over which remedial framework applies to a given problem.",
-      "signals": {
-        "clarity": 99,
-        "gemini": 75,
         "chunk": 75
       }
     }

@@ -138,14 +138,42 @@ def upload():
         # Layer 9: Reporting
         reporter = AuditReportGenerator()
         
-        # FREE ANALYSIS: Pass ALL chunks to Gemini for contradiction detection
-        print(f"\n[PIPELINE] Analyzing {len(chunks)} chunks for ANY contradictions...")
-        
-        # Prepare chunks for LLM analysis
-        all_content = "\n\n---CHUNK BREAK---\n\n".join([c.get('content', '') for c in chunks])
-        
-        # Ask Gemini to find ALL contradictions
-        findings = agent.analyze_full_document(all_content, filename)
+        # EBM PRE-SCREENING: Score all chunks, send only high-risk ones to Gemini
+        print(f"\n[PIPELINE] EBM pre-screening {len(chunks)} chunks...")
+
+        # Score every chunk with EBM
+        scored_chunks = []
+        for chunk in chunks:
+            # Create a minimal finding-like object from chunk for EBM scoring
+            chunk_obj = type('Chunk', (), {
+                'title': chunk.get('content', '')[:80],
+                'section_1': chunk.get('content', '')[:200],
+                'section_2': chunk.get('content', '')[200:400],
+                'why_problem': '',
+                'explanation': chunk.get('content', ''),
+                'financial_impact': '',
+                'risk_score': 0.5,
+                'confidence': 0.75
+            })()
+            ebm_score, features = judge.score_finding(chunk_obj)
+            scored_chunks.append((ebm_score, chunk))
+
+        # Sort by EBM risk score, take top 25
+        scored_chunks.sort(key=lambda x: x[0], reverse=True)
+        top_chunks = scored_chunks[:25]
+        print(f"[PIPELINE] EBM selected top {len(top_chunks)} high-risk chunks")
+        print(f"[PIPELINE] Risk score range: {top_chunks[-1][0]:.2f} — {top_chunks[0][0]:.2f}")
+
+        # Send only EBM-selected chunks to Gemini for synthesis
+        selected_content = "\n\n---CHUNK BREAK---\n\n".join([
+            f"[EBM Risk: {score:.2f}]\n{chunk.get('content', '')}"
+            for score, chunk in top_chunks
+        ])
+
+        print(f"[PIPELINE] Sending {len(selected_content)} chars to Gemini (EBM pre-screened)...")
+
+        # Gemini synthesizes contradictions from EBM-selected chunks only
+        findings = agent.analyze_full_document(selected_content, filename)
         
         if not findings:
             print("[PIPELINE] ℹ No contradictions found")

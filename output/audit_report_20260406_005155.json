@@ -1,0 +1,49 @@
+{
+  "report_id": "VER-20260406_005155",
+  "generated_timestamp": "2026-04-06T00:51:55.431181",
+  "query": "contradiction detection",
+  "timestamp": "20260406_005155",
+  "total_findings": 2,
+  "summary": "Analyzed 252 chunks. Found 2 contradictions.",
+  "document_metadata": {
+    "document_name": "Exxon purchase agreement.pdf",
+    "analysis_timestamp": "2026-04-06T00:51:55.431192",
+    "gemini_model": "gemini-2.5-pro",
+    "ebm_training": "LEDGAR 1200 samples",
+    "confidence_calibration": "Uncalibrated - will adjust after 10+ pilot analyses"
+  },
+  "findings": [
+    {
+      "finding_id": "finding_0",
+      "document": "Exxon purchase agreement.pdf",
+      "title": "Conflicting Statements on Interest Accrual for Purchase Price",
+      "risk_score": 0.42,
+      "risk_level": "MEDIUM",
+      "explanation": "Section reference not provided: 'The Purchase Price shall ... (ii) shall bear Interest compounded annually up to (and including) the Actual Payment Date as provided in Section 3.4 of this Agreement and as further provided in the Senior Secured Term Loan Agreement'\n\nvs\n\nSection 3.4(a): 'At Closing, Purchaser shall pay to Sellers, by wire transfer of immediately available funds to an account designated by Sellers, the Down Payment, which Down Payment shall not bear Interest;'\n\nConflict: One section states that the entire Purchase Price shall bear interest. However, Section 3.4(a) explicitly states that the Down Payment, which is defined as a percentage of the Purchase Price, shall not bear interest. This creates a direct contradiction regarding whether the Down Payment portion of the Purchase Price accrues interest.",
+      "confidence_score": 70.4,
+      "confidence_level": "HIGH",
+      "routing_decision": "ANALYST_REVIEW",
+      "signals": {
+        "clarity": 24.0,
+        "gemini": 100.0,
+        "chunk": 90.0
+      }
+    },
+    {
+      "finding_id": "finding_1",
+      "document": "Exxon purchase agreement.pdf",
+      "title": "Conflicting Language for Title Benefit Calculation in Closing Conditions",
+      "risk_score": 0.66,
+      "risk_level": "HIGH",
+      "explanation": "Section 8.x: '...minus (e) the aggregate Title Benefit Amounts of all Title Benefits (exceeding the Individual Title Defect Threshold and the Aggregate Title Defect Deductible), shall be less than Seventy-Five Million Dollars ($75,000,000).'\n\nvs\n\nSection 9.x: '...(subject to the Individual Title Defect Threshold and the Aggregate Title Defect Deductible), shall be less than Seventy-Five Million Dollars ($75,000,000).'\n\nConflict: Two sections, which appear to be reciprocal closing conditions, use different language to describe how Title Benefits are calculated against a $75,000,000 threshold. One section requires counting only those benefits 'exceeding' certain thresholds, which is a clear mathematical condition. The other section uses the more ambiguous phrase 'subject to' the thresholds, creating a potential conflict over which Title Benefits should be included in the calculation.",
+      "confidence_score": 75.3,
+      "confidence_level": "HIGH",
+      "routing_decision": "ANALYST_REVIEW",
+      "signals": {
+        "clarity": 48.0,
+        "gemini": 90.0,
+        "chunk": 90.0
+      }
+    }
+  ]
+}
