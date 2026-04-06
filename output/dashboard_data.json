@@ -1,124 +1,73 @@
 {
-  "report_id": "VER-20260405_234659",
-  "analysis_date": "April 5, 2026",
-  "document": "SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf",
+  "report_id": "VER-20260406_002437",
+  "analysis_date": "April 6, 2026",
+  "document": "Exxon purchase agreement.pdf",
   "findings": [
     {
       "id": 1,
-      "title": "Conflicting Compensation for Executed Contracts Milestone",
-      "risk_score": 0.6,
+      "title": "Conflicting Settlement Timing for Title Defect Adjustments",
+      "risk_score": 0.57,
       "risk_level": "HIGH",
-      "confidence": 72.5,
+      "confidence": 67.6,
       "routing": "ANALYST_REVIEW",
-      "impact": "Variable, but potentially significant. If the three early adopter contracts have a total up-front payment value of $500,000, the amount in dispute would be $15,000. This amount could be much higher depending on the contract sizes.",
-      "section_1": "Section 3, Milestones & Deliverables table: For the 'Contracts executed \u2014 early adopter cohort' milestone, the Compensation Trigger is '3% of up-front revenue captured for early adopter cohort'",
-      "section_2": "EXHIBIT A \u2014 COMPENSATION SCHEDULE: For the 'Signed contracts w/ monetary payment' milestone, the Bonus Amount is '$__________'",
-      "problem": "There is a direct contradiction regarding a key cash payment. The body of the agreement specifies a formula-based bonus (3% of revenue), while the definitive compensation schedule in the exhibit contains a blank space, implying the amount was never agreed upon. This creates a severe ambiguity and a high likelihood of dispute. The Company could argue the amount is zero, while the Contractor will demand 3% of the contract value.",
+      "impact": "This could significantly impact cash flow at Closing. If the Seller elects to cure Title Defects with a total Title Defect Amount of $15,000,000, the Purchaser would expect to pay that much less at Closing under Section 3.4(d). Under Section 4.3, the Purchaser must pay the full amount and only receive a refund post-closing if the cure fails. The financial impact is the difference in cash required at closing, which could be in the tens of millions of dollars.",
+      "section_1": "Section 3.4(d): All Adjustments to the Purchase Price except for Section 3.2(i) shall be settled in cash at Closing between the Parties, as provided in Section 10.2, and subject to final adjustments as provided in Section 12.1.",
+      "section_2": "Section 4.3: ...if Seller so elects, then Seller shall have ninety (90) days following Closing in which to cure (the \u201cCure Period\u201d)... No adjustment to the Purchase Price will be made at Closing for any Title Defect that Seller elects to attempt to cure... If any such uncured Title Defect remains uncured at the end of the Cure Period, then... an adjustment to the Purchase Price in an amount equal to the applicable Title Defect Amount will be made as part of the Final Settlement Statement.",
+      "problem": "These sections create a direct contradiction regarding the timing of purchase price adjustments for Title Defects that the Seller chooses to cure. Section 3.4(d) mandates that all such adjustments (which are defined in Section 3.3) are settled in cash at Closing. However, Section 4.3 explicitly forbids an adjustment at Closing for these specific defects and defers the potential adjustment until a post-closing Final Settlement Statement. This creates uncertainty about the amount of cash required from the Purchaser at Closing and could lead to a dispute over closing mechanics.",
       "signals": {
-        "clarity": 90,
-        "gemini": 100,
-        "chunk": 75
-      }
-    },
-    {
-      "id": 2,
-      "title": "Ambiguous Ownership of Enhanced Intellectual Property",
-      "risk_score": 0.76,
-      "risk_level": "HIGH",
-      "confidence": 89.0,
-      "routing": "SENIOR_PARTNER_ESCALATION",
-      "impact": "Could be substantial, representing the entire value of the company's R&D investment into the framework during the trial period. This could easily be tens or hundreds of thousands of dollars in technical resource costs and potential future revenue.",
-      "section_1": "Section 2.1: '...company will allocate a % of our primary technical workstream to support development of the roadmap to achieve MVP with the potential opportunity of adding the Contractor's LLM assessment framework to the UtopIQ platform.'",
-      "section_2": "Section 9.2: 'Any enhancements, adaptations, or derivatives of the Contractor IP developed during this engagement shall be addressed in the Second SOW or a separate IP agreement, should the parties elect to proceed with formal integration.'",
-      "problem": "The agreement states the Company will invest its own resources to improve the Contractor's pre-existing IP. However, it explicitly defers any decision on the ownership of these company-funded enhancements. If the parties do not execute a second SOW, there is no provision governing who owns the valuable derivative work. The Contractor could potentially walk away with all the improvements funded by the Company, leaving the Company with no return on its investment.",
-      "signals": {
-        "clarity": 74,
-        "gemini": 100,
-        "chunk": 75
-      }
-    },
-    {
-      "id": 3,
-      "title": "Contradictory and Placeholder Engagement Dates",
-      "risk_score": 0.63,
-      "risk_level": "MEDIUM",
-      "confidence": 72.6,
-      "routing": "ANALYST_REVIEW",
-      "impact": "This could lead to disputes over milestone deadlines and payment eligibility. If a milestone is achieved on June 30th, one party could argue the contract had already expired on June 29th, potentially voiding a payment.",
-      "section_1": "Engagement Overview: 'Effective Date 3/30/26' and 'Initial Term Three (3) months \u2014 Trial Period ending 6/30/26'",
-      "section_2": "Section 5.1, Trial Period: 'The initial term of this engagement ('Trial Period') commences on [START DATE] and runs for three (3) months, through [END DATE].'",
-      "problem": "The document provides specific start and end dates in the overview but uses generic placeholders like '[START DATE]' and '[END DATE]' in the main body of the contract. This creates legal ambiguity about which dates are controlling. Furthermore, a three-month term starting March 30th would end on June 29th, not June 30th, adding another layer of inconsistency.",
-      "signals": {
-        "clarity": 87,
-        "gemini": 100,
-        "chunk": 75
-      }
-    },
-    {
-      "id": 4,
-      "title": "Mismatch Between Fundraising Responsibility and Compensation Trigger",
-      "risk_score": 0.72,
-      "risk_level": "MEDIUM",
-      "confidence": 81.6,
-      "routing": "SENIOR_PARTNER_ESCALATION",
-      "impact": "A $30,000 bonus is at stake. The ambiguity could lead to a dispute over whether the bonus was 'earned' if the capital raised came from sources outside the Contractor's defined scope.",
-      "section_1": "Section 2.3, Grant Funding Support: 'The Contractor will support the team's efforts to secure non-dilutive grant funding...'",
-      "section_2": "Section 3, Milestones & Deliverables table: The milestone 'Early adopter onboarding supported; $1M raised' includes 'at least $1M in committed capital raised (non-dilutive and/or dilutive) by June 8' and triggers '3% of first $1M raised if achieved.'",
-      "problem": "The Contractor's defined role is limited to supporting 'non-dilutive' funding efforts. However, a major incentive bonus is tied to raising capital from both 'non-dilutive and/or dilutive' sources. This creates a scenario where the Contractor could receive a $30,000 windfall if the CEO raises $1M in venture capital (dilutive), or conversely, receive nothing if his own grant-seeking efforts fall short while others succeed. The incentive is not aligned with his specific duties.",
-      "signals": {
-        "clarity": 78,
-        "gemini": 90,
-        "chunk": 75
-      }
-    },
-    {
-      "id": 5,
-      "title": "Ambiguous Compensation for Key Pipeline Milestones",
-      "risk_score": 0.69,
-      "risk_level": "MEDIUM",
-      "confidence": 80.2,
-      "routing": "ANALYST_REVIEW",
-      "impact": "The value is unknown, but a potential dispute could arise over what would be considered a 'reasonable' bonus for achieving these milestones, potentially in the range of $5,000 - $15,000.",
-      "section_1": "Section 3, Milestones & Deliverables table: For the milestones '3 qualified early adopter prospects with signed LOIs' and 'Formal early adopter selection complete', the 'Compensation Trigger' column contains only a hyphen '-'.",
-      "section_2": "Section 6.2, Milestone-Based Incentive Bonuses: '...the Contractor will be eligible for the following milestone-based incentive bonuses upon verified achievement \u2013 see table in section 3'",
-      "problem": "A hyphen is not a defined term for compensation and its meaning is ambiguous. It is unclear if it means $0 compensation is due, or if a value was mistakenly omitted. The Contractor is required to perform significant work (e.g., securing 3 LOIs) for these milestones with no clearly defined cash incentive, which could lead to disputes over fair compensation or lack of motivation.",
-      "signals": {
-        "clarity": 81,
+        "clarity": 93,
         "gemini": 95,
         "chunk": 75
       }
     },
     {
-      "id": 6,
-      "title": "Vague and Company-Controlled Success Metric",
-      "risk_score": 0.7,
-      "risk_level": "LOW",
-      "confidence": 77.8,
-      "routing": "SENIOR_PARTNER_ESCALATION",
-      "impact": "Non-cash, but affects the primary 'value-exchange' compensation (platform access, network, etc.). A dispute over this could poison the relationship and lead to early termination of the agreement.",
-      "section_1": "Section 3, Milestones & Deliverables table: The milestone is 'LLM assessment high level technical discovery and overall solution fit & marketing feasibility (Months 1\u20132)'.",
-      "section_2": "Section 3, Milestones & Deliverables table: The 'Success Metric' for the above milestone is 'LOI drafted by Company & expressing interest and intent to support development and market strategy in Q3'.",
-      "problem": "The success of this milestone is not tied to the quality or completion of the Contractor's work, but rather to a discretionary action taken solely by the Company ('LOI drafted by Company'). The Company could refuse to draft the LOI for any reason, even if the Contractor's performance was flawless, thereby preventing the milestone from ever being officially met. This makes the metric subjective and manipulable.",
+      "id": 2,
+      "title": "Ambiguity of Recourse for Known but Unreported Title Defects",
+      "risk_score": 0.61,
+      "risk_level": "HIGH",
+      "confidence": 68.3,
+      "routing": "ANALYST_REVIEW",
+      "impact": "The financial impact is the full, uncompensated value of any Title Defect that falls into this gap. If a Title Defect has a value of $5,000,000 and the Purchaser becomes aware of it but misses the 45-day reporting deadline, they would have zero recourse against the Seller and would absorb the entire loss.",
+      "section_1": "Section 4.3: ...Purchaser shall be deemed to have waived, and Seller shall have no liability for, any Title Defect that Purchaser fails to assert as a Title Defect by a Title Defect Notice received by Seller on or before the Defect Notice Date.",
+      "section_2": "Section 4.2(c)(iii): Purchaser shall not be entitled to protection under Seller\u2019s special warranty of Defensible Title to the Scheduled Properties in Section 4.2(b), with respect to (A) any matter of which Purchaser or any of its Affiliates had Knowledge prior to the Defect Notice Date...",
+      "problem": "This creates a potential 'trap' where the Purchaser can be left with no remedy for a known Title Defect. If the Purchaser has 'Knowledge' (a defined term) of a defect before the Defect Notice Date but fails to submit a timely notice, Section 4.3 states the pre-closing remedy is waived. Section 4.2(c)(iii) then explicitly bars the Purchaser from using the post-closing special warranty for that same defect. While likely intentional, this structure can lead to significant disputes over what constitutes 'Knowledge' and when it was obtained, potentially leaving the Purchaser to bear the full cost of a material defect it discovered during diligence but failed to properly report.",
       "signals": {
-        "clarity": 80,
+        "clarity": 89,
         "gemini": 85,
         "chunk": 75
       }
     },
     {
-      "id": 7,
-      "title": "Pervasive Use of Placeholder for Company Name",
-      "risk_score": 0.45,
-      "risk_level": "LOW",
-      "confidence": 64.2,
+      "id": 3,
+      "title": "Omission of Interest on Post-Closing Settlement Adjustments",
+      "risk_score": 0.68,
+      "risk_level": "MEDIUM",
+      "confidence": 77.4,
       "routing": "ANALYST_REVIEW",
-      "impact": "Minimal direct financial impact, but it significantly increases legal risk and could add thousands in legal fees to clarify intent during a dispute. It weakens the overall enforceability of the contract.",
-      "section_1": "Engagement Overview: 'Client / Company UtopIQ, a Schmidt-Morgan Corporation'",
-      "section_2": "Multiple sections (e.g., 2.1, 5.2, 9.1): The document repeatedly uses the generic placeholder '[Company Name]' to refer to the client.",
-      "problem": "While the company is identified once at the beginning, the consistent use of a placeholder throughout the operative clauses of the contract is a serious drafting error. It creates ambiguity and makes the document appear unprofessional. A party in a dispute could argue that obligations assigned to '[Company Name]' are not legally binding on 'UtopIQ'.",
+      "impact": "Depends on the size of the final settlement and the time required to finalize it. If the final statement shows Purchaser owes Seller an additional $10,000,000 for revenues Seller received, and it takes 90 days post-closing to finalize and pay, Seller loses the time value of that money. At a 5% annual interest rate, this would be a loss of approximately $125,000 for the Seller.",
+      "section_1": "Section 3.4(c): The Senior Secured Term Loan Agreement shall also provide that (i) Interest shall accrue and be payable on the Principal Amount from the Effective Time up to (and including) the Actual Payment Date...",
+      "section_2": "Section 12.1 Post-Closing Settlement Statement: (This section, referenced but not fully quoted, outlines the process for a final true-up of adjustments, which will result in a final cash payment between the parties months after closing).",
+      "problem": "The agreement is ambiguous due to an omission. It explicitly states that 'Interest' accrues on the financed 'Principal Amount' of the Purchase Price. However, it is silent on whether interest accrues on the net amount owed from the final cash settlement determined post-closing (per Sections 10.2 and 12.1). This settlement reconciles revenues, operating expenses, and other items between the Effective Time and Closing. If this true-up results in a large payment owed by one party to the other, the paying party effectively gets an interest-free loan from the other for the several months it takes to finalize the statement.",
       "signals": {
-        "clarity": 95,
-        "gemini": 100,
+        "clarity": 82,
+        "gemini": 90,
+        "chunk": 75
+      }
+    },
+    {
+      "id": 4,
+      "title": "Potential Conflict Between General and Specific 'Exclusive Remedy' Clauses",
+      "risk_score": 0.51,
+      "risk_level": "MEDIUM",
+      "confidence": 54.3,
+      "routing": "ANALYST_REVIEW",
+      "impact": "The financial impact is the difference in recovery between the two regimes. For example, if a title issue is valued at $9,000,000, it would be below the $10,000,000 'Aggregate Title Defect Deductible' in Section 4.6, resulting in $0 recovery. If the Purchaser could successfully argue it's a breach of representation claim under Article XI (which may have a much lower deductible), they might recover a significant portion of that $9,000,000. The ambiguity creates a financial incentive to litigate the characterization of the claim.",
+      "section_1": "Section 11.6 Exclusive Remedy: The indemnification provisions of this ARTICLE XI shall be the sole and exclusive remedies of the Parties... for any and all Losses... arising from, based upon, related to, or associated with this Agreement... including any breach of any representation, warranty, covenant, or agreement...",
+      "section_2": "Section 4.4 Remedies for Title Defects: ...the provisions set forth in this Section 4.4 shall be the sole and exclusive right and remedy of Purchaser with respect to any Title Defect or any other title matter with respect to any Asset...",
+      "problem": "The existence of multiple 'sole and exclusive remedy' clauses creates a potential ambiguity. While courts typically rule that a specific clause (like the one for Title Defects) governs its specific subject matter over a general clause, a dispute could arise. A party might try to characterize a single issue as both a 'Title Defect' (subject to the high thresholds and deductibles in Section 4.6) and a 'breach of representation' (e.g., Section 5.19 regarding Leases) to try and access the more favorable remedy regime under Article XI. This could lead to litigation over which remedial framework applies to a given problem.",
+      "signals": {
+        "clarity": 99,
+        "gemini": 75,
         "chunk": 75
       }
     }

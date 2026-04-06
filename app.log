@@ -1,0 +1,86 @@
+nohup: ignoring input
+/home/greavesgm/verilence/layer5_llm.py:4: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+
+[APP] VERILENCE Web Server Starting...
+[APP] Visit: http://localhost:5000
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.88.0.4:5000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [05/Apr/2026 23:51:46] "GET /?authuser=0 HTTP/1.1" 200 -
+Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+============================================================
+STARTING VERILENCE ANALYSIS PIPELINE
+============================================================
+
+[UPLOAD] Saved: Eagle_Ford_JOA_Complex.docx.pdf
+
+[L1] INGESTION ENGINE INITIALIZED
+[L1-INGEST] Loading 3 documents...
+  ✓ Eagle_Ford_JOA_Complex.docx.pdf: 39175 chars extracted
+  ✓ SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf: 14705 chars extracted
+[L1-INGEST] ✓ Loaded 2 documents
+[L1-CHUNK] Chunking 2 documents...
+  ✓ Eagle_Ford_JOA_Complex.docx.pdf: 23 chunks
+  ✓ SOW_Greaves_Fractional Chief of Staff_DRAFT_v2.docx.pdf: 4 chunks
+[L1-CHUNK] ✓ Created 27 total chunks
+[L1-SAVE] ✓ Saved 27 chunks to output/chunks.json
+
+[L2] EMBEDDING LAYER
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 10683.46it/s]
+[1mBertModel LOAD REPORT[0m from: nlpaueb/legal-bert-base-uncased
+Key                                        | Status     |  | 
+-------------------------------------------+------------+--+-
+cls.predictions.transform.dense.weight     | UNEXPECTED |  | 
+cls.seq_relationship.weight                | UNEXPECTED |  | 
+cls.seq_relationship.bias                  | UNEXPECTED |  | 
+cls.predictions.decoder.weight             | UNEXPECTED |  | 
+cls.predictions.decoder.bias               | UNEXPECTED |  | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED |  | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED |  | 
+cls.predictions.bias                       | UNEXPECTED |  | 
+cls.predictions.transform.dense.bias       | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[L2-EMBED] Embedding 27 chunks...
+[L2-EMBED] ✓ Embedded 27 chunks
+[L2-SAVE] ✓ Saved 27 embeddings to /home/greavesgm/verilence/output/embeddings.json
+
+[L3] RAG ENGINE (QDRANT)
+[L3-INDEX] Loading embeddings...
+[L3-INDEX] Chunks: 27, Embeddings: 27
+[L3-INDEX] Created collection
+[L3-INDEX] Indexed 27 chunks
+
+[L4] GLASS BOX JUDGE (EBM)
+[L4] Loading LEDGAR training data...
+[L4] ✓ Loaded 1200 real contract clause samples
+/home/greavesgm/.local/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:359: UserWarning: resource_tracker: There appear to be 9 leaked semlock objects to clean up at shutdown
+  warnings.warn(
+/home/greavesgm/.local/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:359: UserWarning: resource_tracker: There appear to be 4 leaked folder objects to clean up at shutdown
+  warnings.warn(
+/home/greavesgm/.local/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:375: UserWarning: resource_tracker: /tmp/joblib_memmapping_folder_17564_da3cc3ae79f14759870fe944b5bb2049_9e7dc2f992db442ca787fa243cac1d9a: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/home/greavesgm/.local/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:375: UserWarning: resource_tracker: /tmp/joblib_memmapping_folder_17564_da3cc3ae79f14759870fe944b5bb2049_386a12c7df1f4346af5df95c55a3b349: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/home/greavesgm/.local/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:375: UserWarning: resource_tracker: /tmp/joblib_memmapping_folder_17564_fcd26d3ab20b4aedb82bb8f6a2d62af3_49368c3509a34444986ab1c52a393fa1: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/home/greavesgm/.local/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:375: UserWarning: resource_tracker: /tmp/joblib_memmapping_folder_17564_8a9050a55a5240c79490d4374b5ea92b_510a2c094d804d22b6d69cd4f5dcc047: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
