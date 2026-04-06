@@ -1,171 +1,133 @@
 # VERILENCE
+### Glass Box Contradiction Detection for Legal Documents
 
-Glass Box contradiction detection engine for legal documents (JOAs, contracts, agreements).
+Verilence finds contradictions, conflicts, and ambiguities in complex legal documents — JOAs, purchase agreements, SOWs, M&A contracts — and produces a fully auditable Glass Box report in under 120 seconds.
 
-## Overview
+**Core thesis:** Legal AI you can't explain is legal AI you can't trust. Every Verilence finding includes a complete mathematical audit trail showing exactly how risk and confidence were calculated.
 
-Verilence uses Explainable Boosting Machine (EBM) + LLM synthesis to find contradictions in legal documents with full mathematical auditability and Glass Box transparency.
+---
 
-**Core Thesis:** Lawyers shouldn't trust AI they can't understand. Every finding includes complete audit trail showing exactly why we're confident.
+## What It Does
 
-## Quick Start
-```bash
-# Terminal 1: Start Qdrant vector database
-docker run -p 6333:6333 qdrant/qdrant
+Upload any legal document. Verilence:
 
-# Terminal 2: Start web server
-cd ~/verilence
-export GOOGLE_API_KEY='your-google-api-key'
-python3 app.py
-```
+1. Chunks and embeds the document using Legal-BERT (768-dim vectors)
+2. Scores every chunk with an Explainable Boosting Machine (EBM) trained on 1,200 real contract clauses from the LEDGAR dataset
+3. Sends the highest-risk chunks to Gemini 2.5 Pro for conflict synthesis — Gemini explains what the EBM found, it does not detect
+4. Routes findings by risk level and confidence score
+5. Generates a paginated Glass Box audit report with full math trail
 
-Visit `http://localhost:5000`
+---
 
-## Upload a Document
+## Validated On
 
-1. Click upload zone (or drag & drop)
-2. Submit PDF or TXT
-3. Wait 30-60 seconds for analysis
-4. View audit report with:
-   - Contradiction findings
-   - Confidence scores (0-100%)
-   - Mathematical proof of each score
-   - Routing decision (analyst review, partner escalation, etc.)
-   - Export as PDF, CSV, or email
+- **New Dominion JOA** — 5 findings including operator agency contradiction and title cost billing conflict
+- **ExxonMobil / Sable Offshore PSA** — findings on a $10B transaction with active environmental litigation, including an interim period remediation liability gap
+- **Commercial SOW** — IP ownership ambiguity and milestone compensation contradictions
+- Any searchable PDF legal document
+
+---
 
 ## Architecture
 
-**9-Layer System:**
-
 | Layer | Component | Purpose |
 |-------|-----------|---------|
-| L1 | Ingestion | PDF/text extraction, smart chunking |
-| L2 | Embedding | Legal-BERT (768-dim vectors) |
-| L3 | RAG | Qdrant vector search & retrieval |
-| L4 | EBM | Glass Box risk scoring |
-| L5 | LLM | Gemini 2.5 Pro contradiction synthesis |
-| L6 | Routing | Confidence-based human-in-the-loop |
-| L9 | Reporting | Audit-ready HTML/JSON reports |
-| Web | UI | Upload, analyze, export, learn |
+| L1 | Ingestion | PDF extraction, legal section chunking |
+| L2 | Embedding | Legal-BERT 768-dim vectors |
+| L3 | RAG | Qdrant vector indexing |
+| L4 | EBM | Glass Box risk scoring — drives the pipeline |
+| L5 | Gemini 2.5 Pro | Conflict synthesis only — explains what EBM found |
+| L6 | Routing | Risk × confidence routing matrix |
+| L9 | Reporting | Paginated Glass Box audit report |
+| Web | Dashboard | Enterprise risk dashboard + audit report |
 
-## Confidence Scoring
+**Key architectural decision:** EBM scores all chunks first. Only the highest-risk chunks are sent to Gemini. The interpretable model drives detection. The LLM synthesizes and explains. This minimizes hallucination and keeps the Glass Box story intact.
 
-Every finding gets a **confidence score (0-100%)** from 3 independent signals:
+---
 
-1. **Text Clarity (35%)** - How obvious is the contradiction in the document?
-2. **LLM Reliability (35%)** - Google Gemini 2.5 Pro production AI
-3. **Retrieval Quality (30%)** - Did we pull the right document chunks?
+## Glass Box Confidence Scoring
 
-**Formula:**
-**Routing Rules:**
-- Confidence > 85%: AUTO_APPROVE
-- Confidence 60-85%: ANALYST_REVIEW
-- Confidence < 60%: SENIOR_PARTNER_ESCALATION
+Every finding is scored by 3 independent signals:
 
-## Key Features
+| Signal | What It Measures | Weight |
+|--------|-----------------|--------|
+| Text Clarity | Distance of risk score from ambiguous midpoint | 35% |
+| Gemini 2.5 Pro | LLM confidence for this specific finding | 35% |
+| Chunk Quality | Specificity of retrieved section quotes | 30% |
 
-✅ **Glass Box Framework** - Every number is auditable and transparent
-✅ **Mathematical Proof** - Findings include complete calculation audit trail
-✅ **Production AI** - Uses Google Gemini 2.5 Pro (not experimental)
+**Formula:** `Confidence = (Clarity × 0.35) + (Gemini × 0.35) + (Chunk × 0.30)`
 
-✅ **Multiple Export Formats** - PDF reports, CSV findings, email sharing
-✅ **No Black Box** - You can see exactly why we found each contradiction
+All weights are disclosed. All calculations are reproducible. Any finding can be independently verified.
 
-## Files
-## How It Works
+---
 
-1. **Ingest** - Extract text from PDF/document
-2. **Chunk** - Break into logical sections (ARTICLE I, Section 2.3, etc.)
-3. **Embed** - Convert to 768-dimensional vectors using Legal-BERT
-4. **Search** - Query Qdrant for relevant chunks
-5. **Score** - Use EBM to calculate risk score for each finding
-6. **Synthesize** - Use Gemini to explain contradiction in business language
-7. **Route** - Decide if analyst/partner review needed based on confidence
-8. **Report** - Generate audit-ready HTML/JSON with complete math trail
+## Routing Decision Matrix
 
-## Use Cases (Oil & Gas Focus)
+| Risk Score | Confidence | Routing |
+|------------|------------|---------|
+| ≥ 0.70 (HIGH) | Any | Senior Partner Escalation |
+| 0.40–0.69 (MEDIUM) | > 60% | Analyst Review |
+| < 0.40 (LOW) | > 85% | Auto Approve |
 
-- **JOA Due Diligence** - Find contradictions in Joint Operating Agreements before signing
-- **Sole Risk Analysis** - Identify cost recovery conflicts in sole risk provisions
-- **AFE Disputes** - Flag cost overrun threshold ambiguities
-- **Operator Fee Conflicts** - Detect dual compensation contradictions
-- **Portfolio Risk** - Scan all O&G JOAs for exposure across asset portfolio
-- **M&A Integration** - Find contradictions when merging operator agreements
-- **Regulatory Compliance** - Audit trail for SEC filings and compliance reviews
+---
 
-## Roadmap
+## EBM Training Data
 
-**Phase 1 (NOW)** ✅
-- Single document analysis
-- Audit-ready reporting
-- Web UI with export
+The EBM is trained on 1,200 real contract clauses from **LEDGAR** (lex_glue), a published legal dataset of 60,000 labeled contract provisions across 100 clause categories. Training data is balanced across high-risk (financial, liability, IP), medium-risk (governance, compliance), and low-risk (boilerplate, drafting errors) clause types.
 
-**Phase 2 (Months 3-6)**
-- VDR integration (Datasite, Intralinks, S3)
-- Batch processing (analyze 50+ documents)
-- Portfolio dashboard
+**Calibration status:** Uncalibrated — pre-pilot. Scores will improve as pilot operator feedback is incorporated.
 
-**Phase 3 (Months 6-12)**
-- Cross-document contradiction detection
-- Knowledge graph for O&G relationships
-- API endpoints
+---
 
-**Phase 4 (Year 2+)**
-- Enterprise (SSO, RBAC, white-label)
-- Multi-tenant support
-- Advanced analytics
-
-## Requirements
-See `requirements.txt` for Python dependencies.
-
-## Installation
+## Quick Start
 ```bash
-pip install -r requirements.txt --break-system-packages
+# Start Qdrant
 docker run -p 6333:6333 qdrant/qdrant
+
+# Start Verilence
+cd ~/verilence
 export GOOGLE_API_KEY='your-key'
 python3 app.py
 ```
 
-## Performance
+Visit `http://localhost:5000` — upload any legal document PDF.
 
-- Single document: 30-60 seconds
-- PDF extraction: pdfplumber
-- Embedding: Legal-BERT (local, GPU-optimized if available)
-- Vector search: Qdrant (subsecond)
-- LLM synthesis: Gemini 2.5 Pro (10-15 seconds)
+---
 
-## Security
+## Use Cases
 
-- No data stored externally (local Qdrant)
-- API keys not logged
-- Reports encrypted at rest
-- Reproducible (same input = same output)
-- Audit trail for every finding
+**Current (Phase 1)**
+- JOA contradiction detection before signing
+- M&A purchase agreement risk screening
+- SOW and commercial contract review
+- Any complex legal document analysis
 
-## Testing
+**Roadmap**
+- Phase 2: Batch processing, VDR integration, portfolio dashboard
+- Phase 3: Cross-document contradiction detection, knowledge graph
+- Phase 4: Enterprise API, SSO, multi-tenant, white-label
 
-Upload `Bakken_JOA_Amended_Restated_Full.docx.pdf` to see:
-- 9 real contradictions detected
-- Confidence scores: 64-89%
-- Complete audit trails
-- Routing decisions
+---
 
 ## Status
 
-**MVP (Minimum Viable Product)**
-- Core engine working
-- Glass Box framework validated
-- Audit reports production-ready
-- Code: Alpha (needs production hardening)
+**Beta — working prototype, not production hardened**
 
-**Next:** Code cleanup, AWS migration, SOC 2 compliance (6 months, $250K)
+- Core engine: Working
+- Glass Box framework: Validated on real documents
+- EBM: Trained on LEDGAR real contract data
+- Dashboard: Enterprise-grade UI
+- Audit report: Paginated Glass Box report
+- Security: Needs hardening before enterprise deployment
+- Infrastructure: Cloud Shell / local — needs AWS migration
+
+---
 
 ## License
 
-Proprietary - Verilence LLC
+Proprietary — Verilence LLC
 
 ## Contact
 
-Marc Greaves
-Verilence LLC
-Richmond, VA
+Marc Greaves  
+Verilence LLC · Richmond, VA  
