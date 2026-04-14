@@ -186,7 +186,7 @@ footer{display:flex;justify-content:space-between;margin-top:2rem;padding-top:1r
         <div style="margin-top:16px;padding-top:12px;border-top:1px solid #f3f4f6">
           <div class="panel-title" style="margin-bottom:8px">Signal Weights</div>
           <div class="sig-row"><span>Text clarity</span><span class="sig-val">35%</span></div>
-          <div class="sig-row"><span>Gemini 2.5 Pro</span><span class="sig-val">35%</span></div>
+          <div class="sig-row"><span>Training Data</span><span class="sig-val">35%</span></div>
           <div class="sig-row"><span>Chunk quality</span><span class="sig-val">30%</span></div>
           <div class="calib">
             <div class="calib-lbl">Calibration Status</div>
@@ -244,9 +244,9 @@ footer{display:flex;justify-content:space-between;margin-top:2rem;padding-top:1r
               <div class="expand-grid">
                 <div>
                   <div class="exp-lbl">Section 1</div>
-                  <div class="sec-quote">{{ f.section_1 }}</div>
+                  <div class="sec-quote">{{ f.text_a[:500] }}</div>
                   <div class="exp-lbl" style="margin-top:8px">Section 2</div>
-                  <div class="sec-quote">{{ f.section_2 }}</div>
+                  <div class="sec-quote">{{ f.text_b[:500] }}</div>
                 </div>
                 <div>
                   <div class="exp-lbl">Why it matters</div>
@@ -255,7 +255,7 @@ footer{display:flex;justify-content:space-between;margin-top:2rem;padding-top:1r
                 <div>
                   <div class="exp-lbl">Confidence signals</div>
                   <div class="sig-row"><span>Text clarity</span><span class="sig-val">{{ f.signals.clarity }}%</span></div>
-                  <div class="sig-row"><span>Gemini 2.5 Pro</span><span class="sig-val">{{ f.signals.gemini }}%</span></div>
+                  <div class="sig-row"><span>Training Data</span><span class="sig-val">{{ f.signals.gemini }}%</span></div>
                   <div class="sig-row"><span>Chunk quality</span><span class="sig-val">{{ f.signals.chunk }}%</span></div>
                   <div style="margin-top:8px;padding:8px;background:#fff;border-radius:4px;font-size:0.7rem;color:#6b7280;border:1px solid #e5e7eb">
                     Total: <strong style="color:#1a5eb8">{{ f.confidence }}%</strong> &nbsp;·&nbsp;

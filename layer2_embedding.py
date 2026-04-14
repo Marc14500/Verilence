@@ -1,81 +1,69 @@
-#!/usr/bin/env python3
-"""Layer 2: Embedding Layer - Legal-BERT encoding"""
-
-from transformers import AutoTokenizer, AutoModel
-import torch
+import os
 import json
-import numpy as np
+import google.generativeai as genai
 
 class EmbeddingLayer:
     def __init__(self):
-        print("\n[L2] EMBEDDING LAYER")
-        self.model_name = "nlpaueb/legal-bert-base-uncased"
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        self.model = AutoModel.from_pretrained(self.model_name)
-        self.embeddings = []
+        api_key = os.getenv("GOOGLE_API_KEY")
+        genai.configure(api_key=api_key)
+        self.embedded_chunks = []
+    
+    def embed_text(self, text):
+        """Embed text using Gemini embedding-2-preview"""
+        if not text or not text.strip():
+            return None
+        
+        try:
+            result = genai.embed_content(
+                model="models/gemini-embedding-2-preview",
+                content=text[:2000],
+                task_type="retrieval_document"
+            )
+            if 'embedding' in result:
+                return result['embedding']
+            return None
+        except Exception as e:
+            print(f"[L2-EMBEDDING] Embed error: {e}")
+            return None
     
     def embed_chunks(self, chunks):
-        """Generate embeddings for chunks"""
-        print(f"[L2-EMBED] Embedding {len(chunks)} chunks...")
+        """Embed chunks with real vectors"""
+        self.embedded_chunks = []
         
-        self.embeddings = []
-        
-        for chunk in chunks:
-            # Handle both dict and object formats
-            if isinstance(chunk, dict):
-                text = chunk.get('content', '')
-                chunk_id = chunk.get('chunk_id', '')
-            else:
-                text = getattr(chunk, 'content', '')
-                chunk_id = getattr(chunk, 'chunk_id', '')
+        for i, chunk in enumerate(chunks):
+            text = chunk.get('content', '')
             
-            # Truncate and clean
-            text = str(text)[:512]
+            if not text or not text.strip():
+                continue
             
-            try:
-                # Tokenize
-                inputs = self.tokenizer(
-                    text,
-                    return_tensors="pt",
-                    truncation=True,
-                    padding=True,
-                    max_length=512
-                )
-                
-                # Get embeddings
-                with torch.no_grad():
-                    outputs = self.model(**inputs)
-                    # Use [CLS] token embedding
-                    embedding = outputs.last_hidden_state[:, 0, :].squeeze().numpy()
-                
-                # Normalize
-                embedding = embedding / (np.linalg.norm(embedding) + 1e-8)
-                
-                self.embeddings.append({
-                    'vector': embedding.tolist(),
-                    'chunk_id': str(chunk_id)
-                })
-            except Exception as e:
-                print(f"[L2-EMBED] Warning: Could not embed chunk: {e}")
-                # Use zero vector as fallback
-                self.embeddings.append({
-                    'vector': [0.0] * 768,
-                    'chunk_id': str(chunk_id)
+            embedding = self.embed_text(text)
+            if embedding:
+                self.embedded_chunks.append({
+                    'id': chunk.get('chunk_id', f'chunk_{i}'),
+                    'text': text,
+                    'source': chunk.get('document_name', ''),
+                    'chunk_index': i,
+                    'embedding': embedding,
+                    'metadata': {
+                        'chunk_index': i,
+                        'document': chunk.get('document_name', ''),
+                        'section': chunk.get('section', 'Unknown'),
+                        'keywords': chunk.get('keywords', [])
+                    }
                 })
         
-        print(f"[L2-EMBED] ✓ Embedded {len(self.embeddings)} chunks")
+        print(f"[L2-EMBEDDING] ✓ Embedded {len(self.embedded_chunks)} chunks")
+        return self.embedded_chunks
     
-    def save_embeddings(self, path):
-        """Save embeddings to JSON"""
-        output = {
-            'embeddings': self.embeddings,
-            'model': 'nlpaueb/legal-bert-base-uncased',
-            'dimension': 768,
-            'count': len(self.embeddings)
-        }
+    def save_embeddings(self, filepath):
+        """Save embeddings to file"""
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
         
-        with open(path, 'w') as f:
-            json.dump(output, f)
+        save_data = [
+            {k: v for k, v in chunk.items() if k != 'embedding'}
+            for chunk in self.embedded_chunks
+        ]
         
-        print(f"[L2-SAVE] ✓ Saved {len(self.embeddings)} embeddings to {path}")
-
+        with open(filepath, 'w') as f:
+            json.dump(save_data, f, indent=2)
+        print(f"[L2-EMBEDDING] ✓ Saved {len(save_data)} chunk metadata to {filepath}")

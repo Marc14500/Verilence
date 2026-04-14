@@ -1,101 +1,34 @@
-#!/usr/bin/env python3
-"""VERILENCE Web Frontend - Flask Server"""
-
-from flask import Flask, render_template, request, jsonify, redirect
-from pathlib import Path
-import json
+from flask import Flask, render_template, request, jsonify
 import os
-
-# Import all layers
 from layer1_ingestion import IngestionEngine
 from layer2_embedding import EmbeddingLayer
 from layer3_rag_qdrant import RAGEngineQdrant
 from layer4_ebm import GlassBoxJudge
 from layer5_llm import DiscoveryAgent
-from layer6_confidence_routing import ConfidenceRouter
-from layer9_audit_reporting import AuditReportGenerator
 
-app = Flask(__name__, template_folder='templates')
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max
+app = Flask(__name__)
+UPLOAD_FOLDER = 'uploads'
+OUTPUT_FOLDER = 'output'
 
-UPLOAD_FOLDER = '/home/greavesgm/verilence/uploads'
-OUTPUT_FOLDER = '/home/greavesgm/verilence/output'
-Path(UPLOAD_FOLDER).mkdir(exist_ok=True)
-Path(OUTPUT_FOLDER).mkdir(exist_ok=True)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-
-def _chunk_quality(finding):
-    """Score chunk quality based on specificity of section quotes"""
-    s1 = getattr(finding, 'section_1', '')
-    s2 = getattr(finding, 'section_2', '')
-    combined = len(s1) + len(s2)
-    # More specific quotes = better chunk quality
-    if combined > 300: return 90
-    if combined > 200: return 80
-    if combined > 100: return 70
-    if combined > 50:  return 60
-    return 50
-
-def _calc_confidence(finding):
-    """Calculate confidence from 3 independent signals with real variation"""
-    # Signal 1: Text clarity — based on risk score distance from ambiguous midpoint
-    # risk=0.3 or 0.7 = clear finding, risk=0.5 = ambiguous
-    risk = float(finding.risk_score)
-    clarity = min(1.0, abs(risk - 0.5) * 3.0)  # 0.0-1.0, never exceeds 1.0
-
-    # Signal 2: Gemini detection confidence — raw value returned by LLM (0.0-1.0)
-    gemini = min(1.0, float(getattr(finding, 'confidence', 0.75)))
-
-    # Signal 3: Chunk quality — specificity of retrieved section quotes
-    chunk = _chunk_quality(finding) / 100.0
-
-    # Weighted formula: 35/35/30
-    raw = (clarity * 0.35) + (gemini * 0.35) + (chunk * 0.30)
-    return raw * 100  # return as percentage 0-100
-    x = (clarity * 0.35) + (chunk * 0.30)
-    return raw * 100
+latest_results = None
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/api/health')
-def health():
-    # Save dashboard data
-        dashboard_payload = {
-            'report_id': f'VER-{__import__("datetime").datetime.now().strftime("%Y%m%d_%H%M%S")}',
-            'analysis_date': __import__("datetime").datetime.now().strftime('%B %-d, %Y'),
-            'document': filename,
-            'findings': [{
-                'id': i+1,
-                'title': getattr(f, 'title', 'Contradiction'),
-                'risk_score': float(f.risk_score),
-                'risk_level': f.risk_level,
-                'confidence': round(min(_calc_confidence(f), 89.0), 1),
-                'routing': f.routing_action,
-                'impact': getattr(f, 'financial_impact', 'Unknown'),
-                'section_1': getattr(f, 'section_1', ''),
-                'section_2': getattr(f, 'section_2', ''),
-                'problem': getattr(f, 'why_problem', ''),
-                'signals': {'clarity': round((1.0 - abs(0.5 - f.risk_score)) * 100), 'gemini': round(float(f.confidence) * 100), 'chunk': 75}
-            } for i, f in enumerate(routed)]
-        }
-        with open(Path(OUTPUT_FOLDER) / 'dashboard_data.json', 'w') as df:
-            json.dump(dashboard_payload, df, indent=2)
-        return jsonify({
-        'status': 'ok',
-        'version': '1.0',
-        'services': {
-            'web': 'running',
-            'qdrant': 'check http://localhost:6333'
-        }
-    })
+@app.route('/dashboard')
+def dashboard():
+    if latest_results is None:
+        return render_template('index.html')
+    return render_template('dashboard.html', data=latest_results)
 
 @app.route('/api/upload', methods=['POST'])
 def upload():
-    """Main analysis pipeline - scan entire document for ANY contradictions"""
+    """Main analysis pipeline"""
     try:
-        # 1. INGEST
         print("\n" + "="*60)
         print("STARTING VERILENCE ANALYSIS PIPELINE")
         print("="*60)
@@ -115,236 +48,93 @@ def upload():
         chunks = ingester.chunk_documents()
         ingester.save_chunks(chunks)
         
-        chunks_created = len(chunks)
-        
         # Layer 2: Embedding
         embedder = EmbeddingLayer()
-        embedder.embed_chunks(chunks)
+        embedded_chunks = embedder.embed_chunks(chunks)
         embedder.save_embeddings(f"{OUTPUT_FOLDER}/embeddings.json")
         
         # Layer 3: RAG
         rag = RAGEngineQdrant()
-        rag.load_and_index()
+        if embedded_chunks:
+            vector_size = len(embedded_chunks[0]['embedding'])
+            rag.create_collection(vector_size=vector_size)
+            rag.index_chunks(embedded_chunks)
+            print(f"[L3-RAG] ✓ Ready for queries")
         
-        # Layer 4: EBM Scoring
+        # Layer 4: EBM
         judge = GlassBoxJudge()
+        all_issues = judge.find_potential_issues(embedded_chunks)
+        high_risk = [issue for issue in all_issues if issue['ebm_risk_score'] > 0.35]
         
-        # Layer 5: LLM Discovery
-        agent = DiscoveryAgent()
-        
-        # Layer 6: Routing
-        router = ConfidenceRouter()
-        
-        # Layer 9: Reporting
-        reporter = AuditReportGenerator()
-        
-        # EBM PRE-SCREENING: Score all chunks, send only high-risk ones to Gemini
-        print(f"\n[PIPELINE] EBM pre-screening {len(chunks)} chunks...")
-
-        # Score every chunk with EBM
-        scored_chunks = []
-        for chunk in chunks:
-            # Create a minimal finding-like object from chunk for EBM scoring
-            chunk_obj = type('Chunk', (), {
-                'title': chunk.get('content', '')[:80],
-                'section_1': chunk.get('content', '')[:200],
-                'section_2': chunk.get('content', '')[200:400],
-                'why_problem': '',
-                'explanation': chunk.get('content', ''),
-                'financial_impact': '',
-                'risk_score': 0.5,
-                'confidence': 0.75
-            })()
-            ebm_score, features = judge.score_finding(chunk_obj)
-            scored_chunks.append((ebm_score, chunk))
-
-        # Sort by EBM risk score, take top 25
-        scored_chunks.sort(key=lambda x: x[0], reverse=True)
-        top_chunks = scored_chunks[:25]
-        print(f"[PIPELINE] EBM selected top {len(top_chunks)} high-risk chunks")
-        print(f"[PIPELINE] Risk score range: {top_chunks[-1][0]:.2f} — {top_chunks[0][0]:.2f}")
-
-        # Send only EBM-selected chunks to Gemini for synthesis
-        selected_content = "\n\n---CHUNK BREAK---\n\n".join([
-            f"[EBM Risk: {score:.2f}]\n{chunk.get('content', '')}"
-            for score, chunk in top_chunks
-        ])
-
-        print(f"[PIPELINE] Sending {len(selected_content)} chars to Gemini (EBM pre-screened)...")
-
-        # Gemini synthesizes contradictions from EBM-selected chunks only
-        findings = agent.analyze_full_document(selected_content, filename)
-        
-        if not findings:
-            print("[PIPELINE] ℹ No contradictions found")
-            return jsonify({
-                'success': True,
-                'filename': filename,
-                'chunks_created': chunks_created,
-                'analyzed': 0,
-                'results': [],
-                'message': 'Document analyzed - no contradictions detected'
+        # Format for dashboard
+        findings = []
+        for i, issue in enumerate(high_risk):
+            score = issue['ebm_risk_score']
+            section_a = issue.get('section_a', 'Unknown')
+            section_b = issue.get('section_b', 'Unknown')
+            
+            findings.append({
+                'id': f'finding_{i}',
+                'title': f"Potential Issue: {section_a} vs {section_b}",
+                'risk_level': 'HIGH' if score > 0.70 else 'MEDIUM' if score > 0.55 else 'LOW',
+                'risk_score': round(score, 2),
+                'confidence': min(100, max(50, int(score * 100 + (issue['semantic_similarity'] * 20)))),
+                'problem': f"Analyzing...",
+                'impact': f"{section_a} and {section_b} may contain conflicting provisions",
+                'signals': {
+                    'clarity': min(100, int(score * 100)),
+                    'chunk': int(issue['semantic_similarity'] * 100),
+                    'gemini': 0
+                },
+                'routing': 'ANALYST_REVIEW',
+                'section_a': section_a,
+                'section_b': section_b,
+                'section_1': section_a,
+                'section_2': section_b,
+                'text_a': issue['text_a'],
+                'text_b': issue['text_b'],
+                'excerpt_a': issue['text_a'][:500],
+                'excerpt_b': issue['text_b'][:500]
             })
         
-        # Score findings with EBM — sets real risk_score on each finding
-        print("[APP] Scoring findings with EBM...")
-        for f in findings:
-            ebm_score, features = judge.score_finding(f)
-            f.risk_score = ebm_score
-            f.ebm_features = features
-            print(f"  EBM score: {ebm_score:.2f} — {getattr(f, 'title', 'Finding')[:50]}")
-
-        # Route findings based on EBM risk scores
-        routed = router.route_findings(findings)
-
-        # Save dashboard data
-        from datetime import datetime as _dt
-        dashboard_payload = {
-            'report_id': f"VER-{_dt.now().strftime('%Y%m%d_%H%M%S')}",
-            'analysis_date': _dt.now().strftime('%B %-d, %Y'),
-            'document': filename,
-            'findings': [{
-                'id': i+1,
-                'title': getattr(f, 'title', 'Contradiction'),
-                'risk_score': float(f.risk_score),
-                'risk_level': f.risk_level,
-                'confidence': round(min(_calc_confidence(f), 89.0), 1),
-                'routing': f.routing_action,
-                'impact': getattr(f, 'financial_impact', 'Unknown'),
-                'section_1': getattr(f, 'section_1', ''),
-                'section_2': getattr(f, 'section_2', ''),
-                'problem': getattr(f, 'why_problem', ''),
-                'signals': {
-                    'clarity': round((1.0 - abs(0.5 - f.risk_score)) * 100),
-                    'gemini': round(float(f.confidence) * 100),
-                    'chunk': _chunk_quality(f)
-                }
-            } for i, f in enumerate(routed)]
-        }
-        with open(Path(OUTPUT_FOLDER) / 'dashboard_data.json', 'w') as df:
-            json.dump(dashboard_payload, df, indent=2)
-        print("[APP] Dashboard data saved")
-
+        findings = findings[:10]
         
-        # Generate audit report
-        briefing = {
-            'executive_summary': f'Analyzed {chunks_created} chunks. Found {len(routed)} contradictions.',
-            'findings_count': len(routed)
+        # Layer 5: Gemini explanations with title
+        print(f"\n[L5-LLM] Explaining {len(findings)} findings...")
+        agent = DiscoveryAgent()
+        for finding in findings:
+            title, explanation, gemini_confidence = agent.analyze_full_document(
+                finding['excerpt_a'],
+                finding['excerpt_b'],
+                finding['section_a'],
+                finding['section_b']
+            )
+            if title:
+                finding['title'] = f"Potential Issue: {title}"
+            if explanation:
+                finding['problem'] = explanation
+            if gemini_confidence:
+                finding['signals']['gemini'] = gemini_confidence
+        
+        print(f"\n[PIPELINE] ✓ Analysis complete: {len(findings)} findings")
+        
+        global latest_results
+        latest_results = {
+            'report_id': f'VER-{len(findings):04d}',
+            'filename': filename,
+            'findings': findings
         }
         
-        retrieval_result_dummy = type('Result', (), {
-            'retrieval_score': 0.75,
-            'citations': []
-        })()
-        
-        report_path = reporter.generate_audit_report(
-            'contradiction detection', routed, briefing, retrieval_result_dummy, 
-            [{'risk_score': f.risk_score} for f in routed]
-        )
-        
-        print("\n" + "="*60)
-        print("ANALYSIS COMPLETE")
-        print("="*60 + "\n")
-        
-        # Save dashboard data
-        dashboard_payload = {
-            'report_id': f'VER-{__import__("datetime").datetime.now().strftime("%Y%m%d_%H%M%S")}',
-            'analysis_date': __import__("datetime").datetime.now().strftime('%B %-d, %Y'),
-            'document': filename,
-            'findings': [{
-                'id': i+1,
-                'title': getattr(f, 'title', 'Contradiction'),
-                'risk_score': float(f.risk_score),
-                'risk_level': f.risk_level,
-                'confidence': round(min(_calc_confidence(f), 89.0), 1),
-                'routing': f.routing_action,
-                'impact': getattr(f, 'financial_impact', 'Unknown'),
-                'section_1': getattr(f, 'section_1', ''),
-                'section_2': getattr(f, 'section_2', ''),
-                'problem': getattr(f, 'why_problem', ''),
-                'signals': {'clarity': round((1.0 - abs(0.5 - f.risk_score)) * 100), 'gemini': round(float(f.confidence) * 100), 'chunk': 75}
-            } for i, f in enumerate(routed)]
-        }
-        with open(Path(OUTPUT_FOLDER) / 'dashboard_data.json', 'w') as df:
-            json.dump(dashboard_payload, df, indent=2)
         return jsonify({
             'success': True,
-            'filename': filename,
-            'chunks_created': chunks_created,
-            'analyzed': len(routed),
-            'results': [{
-                'query': 'full document scan',
-                'findings': len(routed),
-                'report_path': report_path
-            }]
+            'redirect': '/dashboard'
         })
     
     except Exception as e:
-        print(f"\n[ERROR] {str(e)}")
+        print(f"[ERROR] {str(e)}")
         import traceback
         traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/reports')
-def list_reports():
-    """List all generated reports"""
-    try:
-        reports = []
-        for file in sorted(Path(OUTPUT_FOLDER).glob('audit_report_*.json'), reverse=True):
-            reports.append({
-                'filename': file.name,
-                'path': f'/api/report/{file.name}'
-            })
-        return jsonify({'reports': reports})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/report/<filename>')
-def get_report(filename):
-    """Get specific report"""
-    try:
-        filepath = Path(OUTPUT_FOLDER) / filename
-        if not filepath.exists():
-            return jsonify({'error': 'Report not found'}), 404
-        
-        with open(filepath) as f:
-            data = json.load(f)
-        return jsonify(data)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-@app.route('/dashboard')
-def dashboard():
-    """Render live dashboard from most recent analysis"""
-    try:
-        data_path = Path(OUTPUT_FOLDER) / 'dashboard_data.json'
-        if not data_path.exists():
-            return redirect('/')
-        with open(data_path) as f:
-            data = json.load(f)
-        return render_template('dashboard.html', data=data)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-@app.route('/latest-report')
-def latest_report():
-    """Serve the most recent HTML audit report"""
-    try:
-        reports = sorted(Path(OUTPUT_FOLDER).glob('audit_report_*.html'), reverse=True)
-        if not reports:
-            return "No reports found", 404
-        with open(reports[0]) as f:
-            return f.read()
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
 if __name__ == '__main__':
-    print("\n[APP] VERILENCE Web Server Starting...")
-    print("[APP] Visit: http://localhost:5000")
-    app.run(debug=False, host='0.0.0.0', port=5000)
-
-
-
-
+    app.run(debug=True, host='0.0.0.0', port=5000)

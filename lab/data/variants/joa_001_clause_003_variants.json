@@ -1,0 +1,18 @@
+[
+  {
+    "variant_id": "v1",
+    "modified_clause": "Each Party grants to the other parties to this agreement a lien on any interest the other parties now own or later acquire in Oil and Gas Leases and Oil and Gas Interests in the Contract Area, and a security interest in any interest it now owns or later acquires in the personal property and fixtures on or used or obtained for use in connection with any interest, to secure performance of all of its obligations under this agreement including payment of expense, interest and fees, the proper disbursement of all monies paid under this agreement, the assignment or relinquishment of interest in Oil and Gas Leases as required hereunder, and the proper performance of operations under this agreement.",
+    "contradiction_type": "working_interest_mismatch",
+    "sneakiness_score": 2.1,
+    "original_clause": "Each Party grants to the other parties to this agreement a lien on any interest it now owns or later acquires in Oil and Gas Leases and Oil and Gas Interests in the Contract Area, and a security interest in any interest it now owns or later acquires in the personal property and fixtures on or used or obtained for use in connection with any interest, to secure performance of all of its obligations under this agreement including payment of expense, interest and fees, the proper disbursement of all monies paid under this agreement, the assignment or relinquishment of interest in Oil and Gas Leases as required hereunder, and the proper performance of operations under this agreement.",
+    "original_clause_id": "joa_001_clause_003"
+  },
+  {
+    "variant_id": "v2",
+    "modified_clause": "Each Party grants to the other parties to this agreement a lien on any interest it now owns or later acquires in Oil and Gas Leases and Oil and Gas Interests in the Contract Area, and a security interest in any interest it now owns or later acquires in the personal property and fixtures on or used or obtained for use in connection with any interest, to secure performance of all of its obligations under this agreement including any liability arising from operations regardless of fault, payment of expense, interest and fees, the proper disbursement of all monies paid under this agreement, and the proper performance of operations under this agreement.",
+    "contradiction_type": "operator_liability",
+    "sneakiness_score": 4.3,
+    "original_clause": "Each Party grants to the other parties to this agreement a lien on any interest it now owns or later acquires in Oil and Gas Leases and Oil and Gas Interests in the Contract Area, and a security interest in any interest it now owns or later acquires in the personal property and fixtures on or used or obtained for use in connection with any interest, to secure performance of all of its obligations under this agreement including payment of expense, interest and fees, the proper disbursement of all monies paid under this agreement, the assignment or relinquishment of interest in Oil and Gas Leases as required hereunder, and the proper performance of operations under this agreement.",
+    "original_clause_id": "joa_001_clause_003"
+  }
+]
