@@ -1,0 +1,14 @@
+
+# Training data (too large, regenerate from source)
+ebm_training_data_*.json
+acord/
+cuad/
+
+# Cache
+__pycache__/
+*.pyc
+
+# Local output
+output/*.json
+output/*.html
+uploads/
